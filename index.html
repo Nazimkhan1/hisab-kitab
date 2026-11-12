@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="hi-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hisab Kitab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: bahi-khata. A maroon cover band on top, then a ruled ledger page. Wide screens: entry form on the left, ledger on the right. Phones: one column. */
+:root {
+  --paper: #F6F7F9;
+  --surface: #FFFFFF;
+  --ink: #1B2130;
+  --muted: #5D6677;
+  --line: #E1E4EA;
+  --khata: #8E1230;
+  --khata-ink: #FFFFFF;
+  --khata-soft: #F7E6EA;
+  --accent-text: #8E1230;
+  --jama: #12765A;
+  --jama-soft: #E2F2EB;
+  --naam: #B3261E;
+  --naam-soft: #FBE8E6;
+  --font-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11141B; --surface: #191E28; --ink: #E7EAF0; --muted: #9AA3B3; --line: #2A3141;
+    --khata: #6E0F27; --khata-ink: #FBECEF; --khata-soft: #3A1620; --accent-text: #F28DA2;
+    --jama: #4FC79C; --jama-soft: #10302A; --naam: #F2786C; --naam-soft: #3A1916;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11141B; --surface: #191E28; --ink: #E7EAF0; --muted: #9AA3B3; --line: #2A3141;
+  --khata: #6E0F27; --khata-ink: #FBECEF; --khata-soft: #3A1620; --accent-text: #F28DA2;
+  --jama: #4FC79C; --jama-soft: #10302A; --naam: #F2786C; --naam-soft: #3A1916;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header.cover { background: var(--khata); color: var(--khata-ink); }
+header.cover .wrap { padding-block: 22px 20px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; }
+header.cover h1 { font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1; margin: 0; letter-spacing: .01em; }
+header.cover p { margin: 4px 0 0; opacity: .85; font-size: .9rem; }
+.head-side { display: grid; gap: 8px; justify-items: end; }
+@media (max-width: 560px) { .head-side { justify-items: start; } }
+.backup { display: flex; gap: 6px; flex-wrap: wrap; }
+.backup button { font: inherit; font-size: .8rem; padding: 5px 10px; border-radius: 6px; border: 1px solid currentColor; background: transparent; color: var(--khata-ink); cursor: pointer; opacity: .9; }
+.backup button:hover { opacity: 1; }
+header.cover .today { font-size: .85rem; opacity: .9; font-variant-numeric: tabular-nums; }
+
+main.wrap { padding-block: 20px 48px; display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 820px) { main.wrap { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.note { grid-column: 1 / -1; padding: 10px 14px; border-radius: var(--radius); background: var(--khata-soft); color: var(--ink); font-size: .9rem; }
+
+/* Entry form */
+form.entry { padding: 18px; display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+@media (max-width: 820px) { form.entry { position: static; } }
+form.entry h2, .section-title { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin: 0; line-height: 1.2; }
+.types { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.types button { font: inherit; font-size: .88rem; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; }
+.types button[aria-pressed="true"].in { background: var(--jama-soft); border-color: var(--jama); color: var(--jama); font-weight: 600; }
+.types button[aria-pressed="true"].out { background: var(--naam-soft); border-color: var(--naam); color: var(--naam); font-weight: 600; }
+.types .group-label { grid-column: 1 / -1; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 4px; }
+.hint { font-size: .82rem; color: var(--muted); margin: -6px 0 0; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: .82rem; font-weight: 500; color: var(--muted); }
+.field input, .field select { font: inherit; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; min-width: 0; }
+.field input:focus-visible, .field select:focus-visible, button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+.amount-input { position: relative; }
+.amount-input span { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.amount-input input { padding-left: 26px; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.primary { font: inherit; font-weight: 600; padding: 11px; border-radius: 8px; border: 0; background: var(--khata); color: var(--khata-ink); cursor: pointer; }
+.primary:disabled { opacity: .6; cursor: default; }
+.form-msg { font-size: .85rem; margin: -4px 0 0; min-height: 1.2em; }
+.form-msg.err { color: var(--naam); }
+.form-msg.ok { color: var(--jama); }
+
+/* Ledger side */
+.ledger { display: grid; gap: 18px; min-width: 0; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { padding: 12px 14px; }
+.stat .k { font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.stat .v { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.3; overflow-wrap: anywhere; }
+.stat .s { font-size: .78rem; color: var(--muted); }
+.v.in { color: var(--jama); } .v.out { color: var(--naam); }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
+.tabs button { font: inherit; font-weight: 500; padding: 8px 14px; border: 0; background: none; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--accent-text); border-bottom-color: var(--accent-text); }
+.tabs .month { margin-left: auto; padding-bottom: 6px; }
+.tabs .month input { font: inherit; font-size: .88rem; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+
+.day { overflow: hidden; }
+.day-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 14px; background: var(--paper); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.day-head b { font-weight: 600; }
+.day-head .tot { font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.entry-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.entry-row:last-child { border-bottom: 0; }
+.pill { font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.in { background: var(--jama-soft); color: var(--jama); }
+.pill.out { background: var(--naam-soft); color: var(--naam); }
+.desc { min-width: 0; }
+.desc .t { overflow-wrap: anywhere; }
+.desc .m { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+.amt { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.amt.in { color: var(--jama); } .amt.out { color: var(--naam); }
+.icon-btn { font: inherit; border: 0; background: none; color: var(--muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; font-size: 1.1rem; line-height: 1; }
+.icon-btn:hover { background: var(--paper); color: var(--naam); }
+.confirm { display: flex; gap: 6px; align-items: center; font-size: .82rem; flex-wrap: wrap; justify-content: flex-end; }
+.confirm button { font: inherit; font-size: .82rem; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.confirm button.danger { background: var(--naam); border-color: var(--naam); color: var(--surface); }
+
+.cats { padding: 14px; display: grid; gap: 8px; }
+.cat { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: .88rem; }
+.bar { height: 8px; background: var(--paper); border-radius: 999px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--naam); border-radius: 999px; }
+.cat .amt { font-weight: 500; }
+
+.person { overflow: hidden; }
+.person-head { width: 100%; font: inherit; color: inherit; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 0; background: none; cursor: pointer; text-align: left; flex-wrap: wrap; }
+.person-head .name { font-weight: 600; overflow-wrap: anywhere; }
+.bal { font-size: .85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bal.in { background: var(--jama-soft); color: var(--jama); }
+.bal.out { background: var(--naam-soft); color: var(--naam); }
+.bal.zero { background: var(--paper); color: var(--muted); }
+.person-body { border-top: 1px solid var(--line); }
+.person-actions { display: flex; gap: 8px; padding: 10px 14px; flex-wrap: wrap; background: var(--paper); }
+.person-actions button { font: inherit; font-size: .85rem; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+
+.empty { padding: 28px 18px; text-align: center; color: var(--muted); }
+.empty b { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+.list { display: grid; gap: 12px; }
+@media (prefers-reduced-motion: no-preference) { .form-msg.ok { transition: opacity .3s; } }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <div>
+      <h1>Hisab Kitab</h1>
+      <p>Roz ka kharcha, aamdani aur len-den, ek jagah</p>
+    </div>
+    <div class="head-side">
+      <div class="today" id="todayLabel"></div>
+      <div class="backup">
+        <button type="button" id="exportBtn">Backup lo</button>
+        <button type="button" id="importBtn">Backup se wapas lao</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="note" id="note" hidden></div>
+
+  <form class="entry panel" id="entryForm" novalidate>
+    <h2>Nayi entry</h2>
+    <div class="types" id="types" role="group" aria-label="Entry ka type">
+      <div class="group-label">Roz ka hisab</div>
+      <button type="button" data-type="kharcha" class="out">Kharcha</button>
+      <button type="button" data-type="aamdani" class="in">Aamdani</button>
+      <div class="group-label">Len-den</div>
+      <button type="button" data-type="diya" class="out">Udhaar diya</button>
+      <button type="button" data-type="liya" class="in">Udhaar liya</button>
+      <button type="button" data-type="mila" class="in">Wapas mila</button>
+      <button type="button" data-type="lautaya" class="out">Wapas diya</button>
+    </div>
+    <p class="hint" id="typeHint"></p>
+
+    <div class="field">
+      <label for="amount">Rakam</label>
+      <div class="amount-input"><span>₹</span><input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0" required></div>
+    </div>
+
+    <div class="field" id="personField" hidden>
+      <label for="person">Kiske saath</label>
+      <input id="person" list="peopleList" autocomplete="off" placeholder="Naam, jaise Ramesh">
+      <datalist id="peopleList"></datalist>
+    </div>
+
+    <div class="row2">
+      <div class="field" id="categoryField">
+        <label for="category">Category</label>
+        <select id="category"></select>
+      </div>
+      <div class="field">
+        <label for="date">Tareekh</label>
+        <input id="date" type="date" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="note">Note (optional)</label>
+      <input id="noteInput" type="text" maxlength="120" placeholder="Jaise: sabzi, petrol, rent">
+    </div>
+
+    <button class="primary" id="saveBtn" type="submit">Entry jodo</button>
+    <p class="form-msg" id="formMsg" role="status"></p>
+  </form>
+
+  <section class="ledger">
+    <div class="stats" id="stats"></div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-roz" data-tab="roz" aria-selected="true">Roz ka hisab</button>
+      <button role="tab" id="tab-lenden" data-tab="lenden" aria-selected="false">Len-den</button>
+      <label class="month" id="monthWrap"><span class="sr" hidden>Mahina</span><input id="month" type="month" aria-label="Mahina chuno"></label>
+    </div>
+
+    <div id="view" class="list"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const TYPES = {
+    kharcha: { label: "Kharcha", dir: -1, person: false, hint: "Apna kharcha: khana, bill, travel, shopping." },
+    aamdani: { label: "Aamdani", dir: 1, person: false, hint: "Salary, bonus ya koi bhi aane wala paisa." },
+    diya:    { label: "Udhaar diya", dir: -1, person: true, bal: 1, hint: "Kisi ko paise diye. Wo aapko lautayega." },
+    liya:    { label: "Udhaar liya", dir: 1, person: true, bal: -1, hint: "Kisi se paise liye. Aapko lautane hain." },
+    mila:    { label: "Wapas mila", dir: 1, person: true, bal: -1, hint: "Jisko udhaar diya tha, usne paise lautaye." },
+    lautaya: { label: "Wapas diya", dir: -1, person: true, bal: 1, hint: "Jisse udhaar liya tha, use paise lautaye." },
+  };
+  const CATS = {
+    kharcha: ["Khana-peena", "Ghar ka saman", "Rent", "Bills", "Travel", "Shopping", "Dawai", "Padhai", "Mobile/Internet", "Other"],
+    aamdani: ["Salary", "Business", "Bonus", "Interest", "Gift", "Other"],
+  };
+  const LOCAL_KEY = "hisab-kitab-entries-v1";
+
+  const $ = (id) => document.getElementById(id);
+  const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const money = (n) => inr.format(Math.abs(n));
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const ymd = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  const todayStr = () => ymd(new Date());
+  const yesterdayStr = () => { const d = new Date(); d.setDate(d.getDate() - 1); return ymd(d); };
+  const parseDate = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  function dayLabel(s) {
+    if (s === todayStr()) return "Aaj";
+    if (s === yesterdayStr()) return "Kal";
+    return parseDate(s).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+  }
+
+  // Small DOM helper: never sets innerHTML from data.
+  function h(tag, props, ...kids) {
+    const el = document.createElement(tag);
+    if (props) for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid);
+    return el;
+  }
+
+  const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+  // ---------- state ----------
+  const state = {
+    mode: "loading", // loading | db | local
+    entries: [],
+    loaded: false,
+    type: "kharcha",
+    tab: lsGet("hisab-tab") === "lenden" ? "lenden" : "roz",
+    month: todayStr().slice(0, 7),
+    confirmId: null,
+    openPerson: null,
+  };
+  let col = null;
+
+  // ---------- storage ----------
+  const store = {
+    async add(doc) {
+      if (state.mode === "db") return col.doc().set(doc);
+      const id = "l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      state.entries.push({ id, ...doc });
+      saveLocal(); render();
+    },
+    async remove(id) {
+      if (state.mode === "db") return col.doc(id).delete();
+      state.entries = state.entries.filter((e) => e.id !== id);
+      saveLocal(); render();
+    },
+  };
+  function loadLocal() { try { const a = JSON.parse(lsGet(LOCAL_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch { return []; } }
+  function saveLocal() { lsSet(LOCAL_KEY, JSON.stringify(state.entries)); }
+
+  function showNote(text) { const n = $("note"); n.textContent = text; n.hidden = !text; }
+
+  async function init() {
+    const timer = setTimeout(() => {
+      if (!state.loaded) showNote("Aapka hisab abhi load nahi ho pa raha. Internet check karke page dobara kholiye.");
+    }, 10000);
+    let db = null, user = null;
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      }
+    } catch { db = null; }
+    const uid = user ? await user.id() : null;
+
+    if (db && uid) {
+      state.mode = "db";
+      col = db.collection("data/users/" + uid);
+      col.onSnapshot((snap) => {
+        state.entries = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        if (!snap.metadata.fromCache && !state.loaded) { state.loaded = true; clearTimeout(timer); showNote(""); }
+        render();
+      }, (err) => {
+        clearTimeout(timer); state.loaded = true;
+        showNote(err.code === "revoked" ? "Is page ka access badal gaya hai. Entries ab save nahi hongi." : "Hisab load nahi ho paya. Page dobara kholiye.");
+        render();
+      });
+    } else {
+      state.mode = "local"; state.loaded = true; clearTimeout(timer);
+      state.entries = loadLocal();
+      if (!state.entries.length) showNote("Entries isi browser mein save hoti hain. Browser ka data clear karne se pehle “Backup lo” se file save kar lijiye.");
+      render();
+    }
+  }
+
+  // ---------- calculations ----------
+  const personKey = (name) => name.trim().toLowerCase().replace(/\s+/g, " ");
+  function people() {
+    const map = new Map();
+    for (const e of state.entries) {
+      const t = TYPES[e.type];
+      if (!t || !t.person || !e.personKey) continue;
+      if (!map.has(e.personKey)) map.set(e.personKey, { key: e.personKey, name: e.person, bal: 0, entries: [] });
+      const p = map.get(e.personKey);
+      p.bal += t.bal * (Number(e.amount) || 0);
+      p.entries.push(e);
+    }
+    for (const p of map.values()) { p.bal = Math.round(p.bal * 100) / 100; p.entries.sort(byDateDesc); }
+    return [...map.values()];
+  }
+  function byDateDesc(a, b) { return a.date === b.date ? (b.createdAt || 0) - (a.createdAt || 0) : (a.date < b.date ? 1 : -1); }
+
+  // ---------- render ----------
+  function render() {
+    $("todayLabel").textContent = parseDate(todayStr()).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    renderForm();
+    renderStats();
+    renderTabs();
+    const view = $("view");
+    view.replaceChildren();
+    if (!state.loaded && state.entries.length === 0) {
+      view.append(h("div", { class: "panel empty" }, h("b", null, "Hisab load ho raha hai…"), "Bas ek pal."));
+      return;
+    }
+    if (state.tab === "roz") renderDaily(view); else renderLenden(view);
+  }
+
+  function renderForm() {
+    const t = TYPES[state.type];
+    for (const b of $("types").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.type === state.type));
+    $("typeHint").textContent = t.hint;
+    $("personField").hidden = !t.person;
+    const cats = CATS[state.type];
+    $("categoryField").hidden = !cats;
+    if (cats) {
+      const sel = $("category");
+      if (sel.dataset.for !== state.type) {
+        sel.replaceChildren(...cats.map((c) => h("option", { value: c }, c)));
+        sel.dataset.for = state.type;
+      }
+    }
+    const dl = $("peopleList");
+    dl.replaceChildren(...people().map((p) => h("option", { value: p.name })));
+  }
+
+  function renderStats() {
+    const m = state.month;
+    let kharcha = 0, aamdani = 0, aajKharcha = 0;
+    const today = todayStr();
+    for (const e of state.entries) {
+      const a = Number(e.amount) || 0;
+      if (e.type === "kharcha" && e.date === today) aajKharcha += a;
+      if (!e.date || e.date.slice(0, 7) !== m) continue;
+      if (e.type === "kharcha") kharcha += a;
+      if (e.type === "aamdani") aamdani += a;
+    }
+    let lena = 0, dena = 0, lenaN = 0, denaN = 0;
+    for (const p of people()) { if (p.bal > 0) { lena += p.bal; lenaN++; } else if (p.bal < 0) { dena += -p.bal; denaN++; } }
+    const monthName = parseDate(m + "-01").toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+    const stat = (k, v, cls, s) => h("div", { class: "panel stat" }, h("div", { class: "k" }, k), h("div", { class: "v " + cls }, v), h("div", { class: "s" }, s));
+    $("stats").replaceChildren(
+      stat("Kharcha", money(kharcha), "out", monthName + " · aaj " + money(aajKharcha)),
+      stat("Aamdani", money(aamdani), "in", monthName),
+      stat("Lena hai", money(lena), "in", lenaN ? lenaN + (lenaN === 1 ? " vyakti se" : " logon se") : "Kisi se nahi"),
+      stat("Dena hai", money(dena), "out", denaN ? denaN + (denaN === 1 ? " vyakti ko" : " logon ko") : "Kisi ko nahi"),
+    );
+  }
+
+  function renderTabs() {
+    for (const b of document.querySelectorAll(".tabs [role=tab]")) b.setAttribute("aria-selected", String(b.dataset.tab === state.tab));
+    $("month").value = state.month;
+    $("monthWrap").hidden = state.tab !== "roz";
+  }
+
+  function entryRow(e, showPerson) {
+    const t = TYPES[e.type] || { label: e.type, dir: -1 };
+    const cls = t.dir > 0 ? "in" : "out";
+    const title = e.note || (t.person ? (t.label + (showPerson && e.person ? " · " + e.person : "")) : (e.category || t.label));
+    const meta = [];
+    if (t.person && e.person && showPerson && e.note) meta.push(e.person);
+    if (!t.person && e.category && e.note) meta.push(e.category);
+    if (!showPerson) meta.push(dayLabel(e.date));
+    const right = state.confirmId === e.id
+      ? h("div", { class: "confirm" }, "Hatana hai?",
+          h("button", { type: "button", class: "danger", onclick: () => doDelete(e.id) }, "Haan, hatao"),
+          h("button", { type: "button", onclick: () => { state.confirmId = null; render(); } }, "Nahi"))
+      : h("button", { type: "button", class: "icon-btn", "aria-label": "Entry hatao", title: "Entry hatao", onclick: () => { state.confirmId = e.id; render(); } }, "×");
+    return h("div", { class: "entry-row" },
+      h("span", { class: "pill " + cls }, t.label),
+      h("div", { class: "desc" }, h("div", { class: "t" }, title), meta.length ? h("div", { class: "m" }, meta.join(" · ")) : null),
+      h("span", { class: "amt " + cls }, (t.dir > 0 ? "+" : "−") + money(e.amount)),
+      right);
+  }
+
+  async function doDelete(id) {
+    state.confirmId = null;
+    try { await store.remove(id); } catch { showNote("Entry hat nahi payi. Dobara try kariye."); }
+    render();
+  }
+
+  function renderDaily(view) {
+    const list = state.entries.filter((e) => e.date && e.date.slice(0, 7) === state.month).sort(byDateDesc);
+    if (!list.length) {
+      const isNow = state.month === todayStr().slice(0, 7);
+      view.append(h("div", { class: "panel empty" },
+        h("b", null, isNow ? "Is mahine ki koi entry nahi" : "Is mahine ki koi entry nahi mili"),
+        isNow ? "Bagal wale form mein rakam likhiye aur “Entry jodo” dabaiye. Har din ka kharcha aur aamdani yahan tareekh ke hisab se dikhega." : "Upar se koi aur mahina chuniye."));
+      return;
+    }
+    // Category breakdown of this month's kharcha
+    const byCat = new Map();
+    let total = 0;
+    for (const e of list) if (e.type === "kharcha") { const c = e.category || "Other"; byCat.set(c, (byCat.get(c) || 0) + Number(e.amount)); total += Number(e.amount); }
+    if (byCat.size) {
+      const rows = [...byCat.entries()].sort((a, b) => b[1] - a[1]);
+      const max = rows[0][1];
+      view.append(h("div", { class: "panel cats" },
+        h("div", { class: "section-title" }, "Kharcha kahan gaya"),
+        rows.map(([c, a]) => h("div", { class: "cat" },
+          h("span", null, c),
+          h("div", { class: "bar", title: Math.round((a / total) * 100) + "%" }, h("i", { style: "width:" + Math.max(3, (a / max) * 100) + "%" })),
+          h("span", { class: "amt" }, money(a))))));
+    }
+    const groups = new Map();
+    for (const e of list) { if (!groups.has(e.date)) groups.set(e.date, []); groups.get(e.date).push(e); }
+    for (const [date, items] of groups) {
+      let out = 0, inn = 0;
+      for (const e of items) { const t = TYPES[e.type]; if (!t) continue; if (t.dir > 0) inn += Number(e.amount); else out += Number(e.amount); }
+      const parts = [];
+      if (out) parts.push("Gaya " + money(out));
+      if (inn) parts.push("Aaya " + money(inn));
+      view.append(h("div", { class: "panel day" },
+        h("div", { class: "day-head" }, h("b", null, dayLabel(date)), h("span", { class: "tot" }, parts.join(" · "))),
+        items.map((e) => entryRow(e, true))));
+    }
+  }
+
+  function renderLenden(view) {
+    const ps = people().sort((a, b) => (b.bal !== 0) - (a.bal !== 0) || Math.abs(b.bal) - Math.abs(a.bal) || a.name.localeCompare(b.name));
+    if (!ps.length) {
+      view.append(h("div", { class: "panel empty" },
+        h("b", null, "Abhi koi len-den nahi"),
+        "Kisi ko udhaar diya ya kisi se liya? Form mein “Udhaar diya” ya “Udhaar liya” chuniye aur naam likhiye. Har vyakti ka baaki hisab yahan dikhega."));
+      return;
+    }
+    for (const p of ps) {
+      const open = state.openPerson === p.key;
+      const balEl = p.bal > 0 ? h("span", { class: "bal in" }, "Lena hai " + money(p.bal))
+        : p.bal < 0 ? h("span", { class: "bal out" }, "Dena hai " + money(p.bal))
+        : h("span", { class: "bal zero" }, "Hisab barabar");
+      const card = h("div", { class: "panel person" },
+        h("button", { type: "button", class: "person-head", "aria-expanded": String(open), onclick: () => { state.openPerson = open ? null : p.key; render(); } },
+          h("span", { class: "name" }, p.name), balEl));
+      if (open) {
+        const actions = h("div", { class: "person-actions" });
+        if (p.bal > 0) actions.append(h("button", { type: "button", onclick: () => prefill("mila", p.name, p.bal) }, "Wapas mila likho"));
+        if (p.bal < 0) actions.append(h("button", { type: "button", onclick: () => prefill("lautaya", p.name, -p.bal) }, "Wapas diya likho"));
+        actions.append(h("button", { type: "button", onclick: () => prefill("diya", p.name) }, "Aur udhaar diya"));
+        actions.append(h("button", { type: "button", onclick: () => prefill("liya", p.name) }, "Aur udhaar liya"));
+        card.append(h("div", { class: "person-body" }, actions, p.entries.map((e) => entryRow(e, false))));
+      }
+      view.append(card);
+    }
+  }
+
+  function prefill(type, name, amount) {
+    state.type = type;
+    renderForm();
+    $("person").value = name;
+    $("amount").value = amount ? String(amount) : "";
+    $("formMsg").textContent = ""; $("formMsg").className = "form-msg";
+    $("entryForm").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    $("amount").focus({ preventScroll: true });
+  }
+
+  // ---------- events ----------
+  $("types").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-type]");
+    if (!b) return;
+    state.type = b.dataset.type;
+    $("formMsg").textContent = "";
+    renderForm();
+  });
+  for (const b of document.querySelectorAll(".tabs [role=tab]")) b.addEventListener("click", () => {
+    state.tab = b.dataset.tab; state.confirmId = null; lsSet("hisab-tab", state.tab); render();
+  });
+  $("month").addEventListener("change", (ev) => { if (ev.target.value) { state.month = ev.target.value; render(); } });
+
+  $("entryForm").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const msg = $("formMsg");
+    const say = (text, kind) => { msg.textContent = text; msg.className = "form-msg " + (kind || ""); };
+    const t = TYPES[state.type];
+    const amount = Math.round(parseFloat($("amount").value) * 100) / 100;
+    const date = $("date").value;
+    const person = $("person").value.trim().replace(/\s+/g, " ");
+    if (!(amount > 0)) { say("Rakam likhiye, 0 se zyada.", "err"); $("amount").focus(); return; }
+    if (!date) { say("Tareekh chuniye.", "err"); $("date").focus(); return; }
+    if (t.person && !person) { say("Naam likhiye, kiske saath len-den hua.", "err"); $("person").focus(); return; }
+    if (state.mode === "loading") { say("Hisab abhi load ho raha hai. Ek pal ruk kar dobara dabaiye.", "err"); return; }
+    const doc = { type: state.type, amount, date, note: $("noteInput").value.trim(), createdAt: Date.now() };
+    if (t.person) {
+      // Reuse the existing spelling for a known person.
+      const key = personKey(person);
+      const known = people().find((p) => p.key === key);
+      doc.person = known ? known.name : person; doc.personKey = key;
+    }
+    if (CATS[state.type]) doc.category = $("category").value;
+    const btn = $("saveBtn");
+    btn.disabled = true;
+    try {
+      await store.add(doc);
+      $("amount").value = ""; $("noteInput").value = "";
+      say(t.label + " " + money(amount) + " jud gaya.", "ok");
+      if (date.slice(0, 7) !== state.month && state.tab === "roz") { state.month = date.slice(0, 7); render(); }
+      $("amount").focus();
+    } catch (err) {
+      say(err && err.code === "quota_exceeded" ? "Storage bhar gaya hai. Kuch purani entries hatakar dobara try kariye." : "Entry save nahi hui. Internet check karke dobara dabaiye.", "err");
+    } finally { btn.disabled = false; }
+  });
+
+  $("exportBtn").addEventListener("click", () => {
+    const data = JSON.stringify({ app: "hisab-kitab", version: 1, exportedAt: new Date().toISOString(), entries: state.entries.map(({ id, ...rest }) => ({ id, ...rest })) }, null, 2);
+    const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+    const a = h("a", { href: url, download: "hisab-kitab-backup-" + todayStr() + ".json" });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showNote("Backup file download ho gayi (" + state.entries.length + " entries).");
+  });
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", async (ev) => {
+    const file = ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      const list = Array.isArray(parsed) ? parsed : parsed.entries;
+      if (!Array.isArray(list)) throw new Error("bad");
+      const have = new Set(state.entries.map((e) => e.id));
+      let added = 0;
+      for (const e of list) {
+        if (!e || !TYPES[e.type] || !(Number(e.amount) > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(e.date || "")) continue;
+        if (e.id && have.has(e.id)) continue;
+        const { id, ...doc } = e;
+        if (state.mode === "db") await col.doc().set(doc);
+        else state.entries.push({ id: id || "l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ...doc });
+        added++;
+      }
+      if (state.mode !== "db") saveLocal();
+      showNote(added ? added + " entries backup se wapas aa gayi." : "Backup mein koi nayi entry nahi mili.");
+      render();
+    } catch {
+      showNote("Ye file Hisab Kitab ka backup nahi lag rahi. Sahi .json file chuniye.");
+    }
+  });
+
+  $("date").value = todayStr();
+  render();
+  init();
+})();
+</script>
+</body>
+</html>
