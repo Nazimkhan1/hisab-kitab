@@ -195,27 +195,83 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 .install-sheet .acts button.go { background: var(--khata); border-color: var(--khata); color: var(--khata-ink); }
 @media (prefers-reduced-motion: no-preference) { .install-sheet { animation: sheet-up .25s ease-out; } @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } } }
 @media (prefers-reduced-motion: no-preference) { .form-msg.ok { transition: opacity .3s; } }
+
+/* ---- app bar ---- */
+header.appbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 31; background: var(--khata); }
+header.appbar .appbar-row { padding-block: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: nowrap; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand img { width: 36px; height: 36px; border-radius: 10px; flex: none; box-shadow: 0 0 0 2px rgba(255,255,255,.25); }
+.brand-text { min-width: 0; }
+header.appbar h1 { font-size: 1.3rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+header.appbar .today { font-size: .74rem; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+.bar-actions .acct { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+.icon-round { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 0; background: rgba(255,255,255,.14); color: var(--khata-ink); cursor: pointer; padding: 0; }
+.icon-round:hover { background: rgba(255,255,255,.24); }
+.bar-actions .acct .login-pill { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: .85rem; font-weight: 600; padding: 6px 12px 6px 6px; border-radius: 999px; border: 0; background: var(--khata-ink); color: var(--khata); cursor: pointer; white-space: nowrap; }
+.bar-actions .acct .login-pill b { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; background: #fff; color: #4285F4; font-family: Arial, sans-serif; }
+.bar-actions .acct .sync-dot { width: 30px; height: 30px; border-radius: 50%; border: 0; display: grid; place-items: center; font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; padding: 0; }
+.bar-actions .acct .sync-dot.ok { background: rgba(255,255,255,.16); color: #B9F6D8; }
+.bar-actions .acct .sync-dot.saving { background: rgba(255,255,255,.16); color: var(--khata-ink); }
+.bar-actions .acct .sync-dot.warn { background: #FFE9B0; color: #6B4A00; }
+.bar-actions .acct .sync-dot.err { background: #FFE1DC; color: #8A1C12; }
+.acct .who .nm { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 560px) { .acct .who .nm { display: none; } .bar-actions .acct .login-pill span { display: none; } .bar-actions .acct .login-pill { padding: 5px; } }
+.menu-wrap { position: relative; }
+.menu { position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 240px; max-width: calc(100vw - 32px); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 40px rgba(0,0,0,.28); padding: 6px; z-index: 40; display: grid; gap: 2px; }
+.menu > button, .menu > a { font: inherit; font-size: .95rem; text-align: start; padding: 11px 12px; border-radius: 10px; border: 0; background: none; color: var(--ink); cursor: pointer; text-decoration: none; }
+.menu > button:hover, .menu > a:hover, .menu > button:focus-visible, .menu > a:focus-visible { background: var(--paper); }
+.menu > a { color: var(--muted); font-size: .88rem; }
+.menu .danger { color: var(--naam); font-weight: 600; }
+.menu-lang { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; font-size: .95rem; }
+.menu-lang select { font: inherit; font-size: .9rem; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+.menu-sep { height: 1px; background: var(--line); margin: 4px 6px; }
+
+/* ---- bottom tabs (phones) ---- */
+.bottom-nav { display: none; }
+@media (max-width: 820px) {
+  .bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(0,0,0,.08); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+  .bottom-nav button { font: inherit; font-size: .74rem; font-weight: 500; display: grid; justify-items: center; gap: 2px; padding: 6px 4px; border: 0; background: none; color: var(--muted); cursor: pointer; border-radius: 12px; }
+  .bottom-nav button svg { padding: 3px 14px; box-sizing: content-box; border-radius: 999px; }
+  .bottom-nav button[aria-current="page"] { color: var(--accent-text); font-weight: 600; }
+  .bottom-nav button[aria-current="page"] svg { background: var(--khata-soft); }
+  main.wrap { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  body[data-view="add"] .ledger { display: none; }
+  body[data-view="roz"] form.entry, body[data-view="lenden"] form.entry { display: none; }
+  .tabs [role=tab] { display: none; }
+  .tabs { border-bottom: 0; }
+  .install-sheet { bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+}
 </style>
 </head>
 <body>
 
-<header class="cover">
-  <div class="wrap">
-    <div>
-      <h1 data-i18n="app.title">Hisab Kitab</h1>
-      <p data-i18n="app.tagline">Roz ka kharcha, aamdani aur len-den, ek jagah</p>
-    </div>
-    <div class="head-side">
-      <div class="head-top">
+<header class="cover appbar">
+  <div class="wrap appbar-row">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" width="36" height="36">
+      <div class="brand-text">
+        <h1 data-i18n="app.title">Hisab Kitab</h1>
         <div class="today" id="todayLabel"></div>
-        <label class="lang-pick"><select id="langSel" aria-label="Language / भाषा / ভাষা / زبان"></select></label>
       </div>
+    </div>
+    <div class="bar-actions">
       <div class="acct" id="acct"></div>
-      <div class="backup">
-        <button type="button" id="installBtn" data-i18n="btn.install" hidden>App install karo</button>
-        <button type="button" id="exportBtn" data-i18n="btn.export">Backup lo</button>
-        <button type="button" id="importBtn" data-i18n="btn.import">Backup se wapas lao</button>
-        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <div class="menu-wrap">
+        <button type="button" class="icon-round" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menu" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="19" r="2" fill="currentColor"/></svg></button>
+        <div class="menu" id="menu" role="menu" hidden>
+          <label class="menu-lang"><span data-i18n="lang.label">Bhasha</span><select id="langSel" aria-label="Language / भाषा / ভাষা / زبان"></select></label>
+          <button type="button" role="menuitem" id="installBtn" data-i18n="btn.install" hidden>App install karo</button>
+          <button type="button" role="menuitem" id="menuSync" data-i18n="acc.sync" hidden>Sync karo</button>
+          <button type="button" role="menuitem" id="exportBtn" data-i18n="btn.export">Backup lo</button>
+          <button type="button" role="menuitem" id="importBtn" data-i18n="btn.import">Backup se wapas lao</button>
+          <input type="file" id="importFile" accept="application/json,.json" hidden>
+          <div class="menu-sep"></div>
+          <a role="menuitem" href="terms.html" target="_blank" rel="noopener">Terms</a>
+          <a role="menuitem" href="privacy.html" target="_blank" rel="noopener">Privacy policy</a>
+          <button type="button" role="menuitem" id="menuLogout" class="danger" data-i18n="acc.logout" hidden>Logout</button>
+        </div>
       </div>
     </div>
   </div>
@@ -282,11 +338,17 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   </section>
 </main>
 
+<nav class="bottom-nav" id="bottomNav" aria-label="Sections">
+  <button type="button" data-nav="add"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><span data-i18n="form.title">Nayi entry</span></button>
+  <button type="button" data-nav="roz"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span data-i18n="group.daily">Roz ka hisab</span></button>
+  <button type="button" data-nav="lenden"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M16 4.5a3 3 0 0 1 0 6M18 14.5c1.8.8 3 2.6 3 4.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span data-i18n="group.lenden">Len-den</span></button>
+</nav>
+
 <div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
   <div class="card">
     <img src="icons/icon-192.png" alt="">
-    <h2 id="welcomeTitle" data-i18n="welcome.title">Apna hisab safe rakhiye</h2>
-    <p data-i18n="welcome.text"></p>
+    <h2 id="welcomeTitle" data-i18n="welcome.afterTitle">Pehli entry save ho gayi!</h2>
+    <p data-i18n="welcome.afterText"></p>
     <select id="welcomeLang" aria-label="Language / भाषा / ভাষা / زبان"></select>
     <button type="button" class="g" id="welcomeLogin" disabled><b>G</b><span data-i18n="acc.login">Google se login</span></button>
     <button type="button" class="skip" id="welcomeSkip" data-i18n="welcome.skip">Abhi nahi, bina login chalao</button>
@@ -429,6 +491,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       "n.welcomeGoogle": "Google se login kariye, taaki aapka hisab aapke Google Drive mein save rahe aur phone badalne par bhi mile.",
       "n.welcomeLocal": "Entries isi phone par save hoti hain. Browser ka data clear karne se pehle “{export}” se file save kar lijiye.",
       "welcome.title": "Apna hisab safe rakhiye", "welcome.text": "Google (Gmail) se login kariye. Aapka hisab aapke apne Google Drive mein save hoga, aur phone badalne par bhi wapas milega.", "welcome.skip": "Abhi nahi, bina login chalao",
+      "welcome.afterTitle": "Entry save ho gayi!", "welcome.afterText": "Ab Google (Gmail) se login kar lijiye, taaki apna data apne Google Drive mein safe rahe aur phone badalne par bhi mile.",
     },
     en: {
       "app.title": "Hisab Kitab", "app.tagline": "Daily expenses, income and loans in one place", "lang.label": "Language",
@@ -473,6 +536,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       "n.welcomeGoogle": "Sign in with Google so your records are saved in your Google Drive and stay with you if you change phones.",
       "n.welcomeLocal": "Entries are saved on this phone. Before clearing browser data, save a file with “{export}”.",
       "welcome.title": "Keep your records safe", "welcome.text": "Sign in with Google (Gmail). Your records are saved in your own Google Drive and come back even if you change phones.", "welcome.skip": "Not now, use without signing in",
+      "welcome.afterTitle": "Entry saved!", "welcome.afterText": "Now sign in with Google (Gmail) to keep your data safe in your own Google Drive, even if you change phones.",
     },
     hi: {
       "app.title": "हिसाब किताब", "app.tagline": "रोज़ का खर्चा, आमदनी और लेन-देन, एक जगह", "lang.label": "भाषा",
@@ -517,6 +581,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       "n.welcomeGoogle": "Google से लॉगिन करें, ताकि आपका हिसाब आपके Google Drive में सेव रहे और फ़ोन बदलने पर भी मिले।",
       "n.welcomeLocal": "एंट्री इसी फ़ोन पर सेव होती हैं। ब्राउज़र का डेटा मिटाने से पहले “{export}” से फ़ाइल सेव कर लें।",
       "welcome.title": "अपना हिसाब सुरक्षित रखें", "welcome.text": "Google (Gmail) से लॉगिन करें। आपका हिसाब आपके अपने Google Drive में सेव होगा, और फ़ोन बदलने पर भी वापस मिलेगा।", "welcome.skip": "अभी नहीं, बिना लॉगिन चलाएँ",
+      "welcome.afterTitle": "एंट्री सेव हो गई!", "welcome.afterText": "अब Google (Gmail) से लॉगिन कर लीजिए, ताकि आपका डेटा आपके अपने Google Drive में सुरक्षित रहे और फ़ोन बदलने पर भी मिले।",
     },
     bn: {
       "app.title": "হিসাব কিতাব", "app.tagline": "রোজকার খরচ, আয় আর লেনদেন, এক জায়গায়", "lang.label": "ভাষা",
@@ -561,6 +626,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       "n.welcomeGoogle": "Google দিয়ে লগইন করুন, যাতে আপনার হিসাব আপনার Google Drive-এ সেভ থাকে আর ফোন বদলালেও পাওয়া যায়।",
       "n.welcomeLocal": "এন্ট্রি এই ফোনেই সেভ হয়। ব্রাউজারের ডেটা মোছার আগে “{export}” দিয়ে ফাইল সেভ করে রাখুন।",
       "welcome.title": "আপনার হিসাব নিরাপদ রাখুন", "welcome.text": "Google (Gmail) দিয়ে লগইন করুন। আপনার হিসাব আপনার নিজের Google Drive-এ সেভ হবে, ফোন বদলালেও ফেরত পাবেন।", "welcome.skip": "এখন না, লগইন ছাড়া চালান",
+      "welcome.afterTitle": "এন্ট্রি সেভ হয়েছে!", "welcome.afterText": "এবার Google (Gmail) দিয়ে লগইন করুন, যাতে আপনার ডেটা আপনার নিজের Google Drive-এ নিরাপদ থাকে আর ফোন বদলালেও পাওয়া যায়।",
     },
     ur: {
       "app.title": "حساب کتاب", "app.tagline": "روز کا خرچہ، آمدنی اور لین دین، ایک جگہ", "lang.label": "زبان",
@@ -605,6 +671,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       "n.welcomeGoogle": "Google سے لاگ اِن کریں، تاکہ آپ کا حساب آپ کے Google Drive میں محفوظ رہے اور فون بدلنے پر بھی ملے۔",
       "n.welcomeLocal": "انٹریاں اسی فون پر محفوظ ہوتی ہیں۔ براؤزر کا ڈیٹا صاف کرنے سے پہلے “{export}” سے فائل محفوظ کر لیں۔",
       "welcome.title": "اپنا حساب محفوظ رکھیں", "welcome.text": "Google (Gmail) سے لاگ اِن کریں۔ آپ کا حساب آپ کے اپنے Google Drive میں محفوظ ہوگا، اور فون بدلنے پر بھی واپس ملے گا۔", "welcome.skip": "ابھی نہیں، بغیر لاگ اِن چلائیں",
+      "welcome.afterTitle": "انٹری محفوظ ہو گئی!", "welcome.afterText": "اب Google (Gmail) سے لاگ اِن کر لیجیے، تاکہ آپ کا ڈیٹا آپ کے اپنے Google Drive میں محفوظ رہے اور فون بدلنے پر بھی ملے۔",
     },
   };
   // Saved category values stay in Hinglish so old entries keep working; only the label changes.
@@ -998,27 +1065,27 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 
   function renderAccount() {
     const box = $("acct");
+    $("menuSync").hidden = !state.account;
+    $("menuLogout").hidden = !state.account;
     if (!GOOGLE_CLIENT_ID) { box.replaceChildren(); return; }
     if (!state.account) {
-      box.replaceChildren(
-        h("span", { class: "sync" }, tr("acc.local")),
-        h("button", { type: "button", id: "loginBtn", onclick: login }, tr("acc.login")));
+      box.replaceChildren(h("button", { type: "button", class: "login-pill", id: "loginBtn", onclick: login, title: tr("acc.local") },
+        h("b", null, "G"), h("span", null, tr("acc.login"))));
       return;
     }
     const time = state.lastSync ? new Date(state.lastSync).toLocaleTimeString(locale(), { hour: "numeric", minute: "2-digit" }) : "";
-    const label = {
-      "needs-login": state.dirty ? tr("acc.pending") : tr("acc.tapSync"),
-      saving: tr("acc.saving"),
-      saved: tr("acc.saved") + (time ? " · " + time : ""),
-      error: tr("acc.error"),
-      off: "",
-    }[state.sync] || "";
-    const needTap = state.sync === "needs-login" || state.sync === "error";
+    const st = state.sync;
+    const info = {
+      saved: ["\u2713", "ok", tr("acc.saved") + (time ? " \u00B7 " + time : "")],
+      saving: ["\u2026", "saving", tr("acc.saving")],
+      error: ["!", "err", tr("acc.error")],
+      "needs-login": ["\u21BB", "warn", state.dirty ? tr("acc.pending") : tr("acc.tapSync")],
+    }[st] || ["\u21BB", "warn", tr("acc.tapSync")];
+    const needTap = st === "needs-login" || st === "error";
     box.replaceChildren(
-      whoEl(state.account),
-      label ? h("span", { class: "sync" + (state.sync === "error" ? " err" : "") }, label) : null,
-      needTap ? h("button", { type: "button", onclick: () => { if (hasToken()) syncNow(); else login(); } }, state.sync === "error" ? tr("acc.retry") : tr("acc.sync")) : null,
-      h("button", { type: "button", class: "ghost", onclick: logout }, tr("acc.logout")));
+      h("button", { type: "button", class: "sync-dot " + info[1], title: info[2], "aria-label": info[2],
+        onclick: () => { if (needTap) { if (hasToken()) syncNow(); else login(); } else showNote(info[2]); } }, info[0]),
+      whoEl(state.account));
   }
 
   function init() {
@@ -1031,7 +1098,6 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       state.entries = loadLocal();
       if (GOOGLE_CLIENT_ID) {
         showNote(state.entries.length ? "" : tr("n.welcomeGoogle"));
-        if (!lsGet(WELCOME_SKIP_KEY)) $("welcome").hidden = false;
       }
       else if (!state.entries.length) showNote(tr("n.welcomeLocal", { export: tr("btn.export") }));
     }
@@ -1212,6 +1278,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   }
 
   function prefill(type, name, amount) {
+    if (state.view !== "add") { state.view = "add"; document.body.dataset.view = "add"; for (const b of document.querySelectorAll("#bottomNav [data-nav]")) { if (b.dataset.nav === "add") b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); } render(); }
     state.type = type;
     renderForm();
     $("person").value = name;
@@ -1261,6 +1328,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       await store.add(doc);
       $("amount").value = ""; $("noteInput").value = "";
       say(tr("v.added", { type: typeLabel(state.type), amt: money(amount) }), "ok");
+      setTimeout(maybeAskLogin, 700);
       if (date.slice(0, 7) !== state.month && state.tab === "roz") { state.month = date.slice(0, 7); render(); }
       $("amount").focus();
     } catch (err) {
@@ -1302,8 +1370,39 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     }
   });
 
+  // ---------- top menu ----------
+  function setMenu(open) { $("menu").hidden = !open; $("menuBtn").setAttribute("aria-expanded", String(open)); }
+  $("menuBtn").addEventListener("click", (ev) => { ev.stopPropagation(); setMenu($("menu").hidden); });
+  document.addEventListener("click", (ev) => { if (!$("menu").hidden && !ev.target.closest(".menu-wrap")) setMenu(false); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("menu").hidden) { setMenu(false); $("menuBtn").focus(); } });
+  $("menu").addEventListener("click", (ev) => { if (ev.target.closest("button, a")) setMenu(false); });
+  $("menuSync").addEventListener("click", () => { if (hasToken()) syncNow(); else login(); });
+  $("menuLogout").addEventListener("click", logout);
+
+  // ---------- bottom tabs (phones) ----------
+  function setView(v) {
+    state.view = v;
+    if (v === "roz" || v === "lenden") { state.tab = v; lsSet("hisab-tab", v); }
+    document.body.dataset.view = v;
+    for (const b of document.querySelectorAll("#bottomNav [data-nav]")) {
+      if (b.dataset.nav === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    }
+    state.confirmId = null;
+    render();
+    window.scrollTo({ top: 0 });
+  }
+  for (const b of document.querySelectorAll("#bottomNav [data-nav]")) b.addEventListener("click", () => setView(b.dataset.nav));
+
   $("welcomeLogin").addEventListener("click", login);
-  $("welcomeSkip").addEventListener("click", () => { lsSet(WELCOME_SKIP_KEY, "1"); $("welcome").hidden = true; });
+  $("welcomeSkip").addEventListener("click", () => { lsSet(WELCOME_SKIP_KEY, String(Date.now())); $("welcome").hidden = true; });
+  // Ask to sign in only after the user has saved an entry; after "not now", ask again 3 days later.
+  function maybeAskLogin() {
+    if (!GOOGLE_CLIENT_ID || state.account) return;
+    const t = Number(lsGet(WELCOME_SKIP_KEY) || 0);
+    if (t && Date.now() - t < 3 * 24 * 3600 * 1000) return;
+    $("installSheet").hidden = true;
+    $("welcome").hidden = false;
+  }
   $("welcomeLang").addEventListener("change", (ev) => { $("langSel").value = ev.target.value; $("langSel").dispatchEvent(new Event("change")); });
   $("langSel").addEventListener("change", (ev) => {
     if (!LANGS[ev.target.value]) return;
@@ -1317,8 +1416,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 
   $("date").value = todayStr();
   applyLanguage();
-  render();
   init();
+  setView(state.entries.length ? state.tab : "add");
 
   // ---------- install popup ----------
   // Browsers never install on their own: Android lets us show this sheet and install with one tap,
