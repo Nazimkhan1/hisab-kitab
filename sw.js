@@ -1,6 +1,6 @@
 // Hisab Kitab service worker: lets the app open offline and be installed.
 // Bump VERSION whenever index.html changes so phones pick up the new copy.
-const VERSION = "hk-v4";
+const VERSION = "hk-v7";
 const SHELL = [
   "./",
   "./index.html",

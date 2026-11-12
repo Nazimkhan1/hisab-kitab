@@ -32,18 +32,18 @@ a { color: var(--khata); }
   <h2>Where it is stored</h2>
   <ul>
     <li><strong>Without sign-in:</strong> only in your phone's browser storage. Nothing leaves your device.</li>
-    <li><strong>With Google sign-in:</strong> in a hidden app folder in <strong>your own Google Drive</strong> (the Drive "appDataFolder"). Only this app can read that folder, and only while you are signed in.</li>
+    <li><strong>With Google sign-in:</strong> in <strong>your own Google Drive</strong>, in two places: a hidden app copy that the app uses to sync between your devices, and a folder called <strong>“Hisab Kitab”</strong> in My Drive with one file per date (for example <code>2026-11-12.json</code>) that you can open, download or delete yourself.</li>
   </ul>
   <p>We do not run a server or database. Your entries are never sent to us or to anyone else.</p>
 
   <h2>Google account data</h2>
-  <p>When you sign in, the app asks Google for your name and email address (to show who is signed in) and permission to manage the app's own file in your Drive (<code>drive.appdata</code>). It cannot see or change any of your other Drive files. Your sign-in stays on your device and is not shared.</p>
+  <p>When you sign in, the app asks Google for your name and email address (to show who is signed in) and two limited Drive permissions: <code>drive.appdata</code> (its own hidden sync copy) and <code>drive.file</code> (only the files and folder the app itself creates). It cannot see or change any of your other Drive files. Your sign-in stays on your device and is not shared.</p>
   <p>Hisab Kitab's use of information received from Google APIs follows the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
 
   <h2>Deleting your data</h2>
   <ul>
     <li>Delete any entry inside the app.</li>
-    <li>To remove everything from Drive: open <a href="https://drive.google.com/drive/settings" target="_blank" rel="noopener">Google Drive settings → Manage apps</a>, find Hisab Kitab and choose "Delete hidden app data".</li>
+    <li>To remove everything from Drive: delete the “Hisab Kitab” folder in My Drive, and in <a href="https://drive.google.com/drive/settings" target="_blank" rel="noopener">Google Drive settings → Manage apps</a> find Hisab Kitab and choose "Delete hidden app data".</li>
     <li>To remove the app's access: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
   </ul>
 
@@ -53,7 +53,7 @@ a { color: var(--khata); }
   <hr>
 
   <h2>Hinglish mein</h2>
-  <p>Aapka hisab ya to sirf aapke phone mein rehta hai, ya login karne par <strong>aapke apne Google Drive</strong> ke ek hidden folder mein. Hamare paas koi server nahi hai, aapka data humein ya kisi aur ko nahi milta. App aapki baaki Drive files nahi dekh sakta. Data hatana ho to Drive settings → Manage apps → Hisab Kitab → "Delete hidden app data".</p>
+  <p>Aapka hisab ya to sirf aapke phone mein rehta hai, ya login karne par <strong>aapke apne Google Drive</strong> mein: "Hisab Kitab" folder mein har tareekh ki ek file, aur sync ke liye ek hidden copy. Hamare paas koi server nahi hai, aapka data humein ya kisi aur ko nahi milta. App aapki baaki Drive files nahi dekh sakta. Data hatana ho to "Hisab Kitab" folder delete kariye, aur Drive settings → Manage apps → Hisab Kitab → "Delete hidden app data".</p>
 
   <p class="muted"><a href="./">Back to Hisab Kitab</a> · <a href="terms.html">Terms of Use</a></p>
 </main>

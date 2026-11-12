@@ -64,7 +64,9 @@ header.cover p { margin: 4px 0 0; opacity: .85; font-size: .9rem; }
 @media (max-width: 560px) { .head-side { justify-items: start; } }
 .acct { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; font-size: .82rem; }
 @media (max-width: 560px) { .acct { justify-content: flex-start; } }
-.acct .who { font-weight: 600; overflow-wrap: anywhere; }
+.acct .who { font-weight: 600; overflow-wrap: anywhere; display: inline-flex; gap: 7px; align-items: center; min-width: 0; }
+.acct .avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,.7); flex: none; }
+.acct .initial { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--khata-ink); color: var(--khata); font-size: .85rem; font-weight: 700; flex: none; }
 .acct .sync { padding: 2px 9px; border-radius: 999px; background: rgba(255,255,255,.16); white-space: nowrap; }
 .acct .sync.err { background: #FFE1DC; color: #8A1C12; }
 .acct button, .backup button.solid { font: inherit; font-size: .8rem; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--khata-ink); background: var(--khata-ink); color: var(--khata); cursor: pointer; font-weight: 600; }
@@ -331,7 +333,10 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   // Google login. Paste the OAuth Web client ID from Google Cloud Console here.
   // Empty = login hidden, app works only on this phone like before.
   const GOOGLE_CLIENT_ID = "801318888296-hhm7bsffkc2kcg5beja2l2lreu0t0oag.apps.googleusercontent.com";
-  const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.appdata openid email profile";
+  const SCOPE_APPDATA = "https://www.googleapis.com/auth/drive.appdata"; // hidden master copy used for sync
+  const SCOPE_FILE = "https://www.googleapis.com/auth/drive.file";       // only files/folders this app creates
+  const GOOGLE_SCOPES = SCOPE_APPDATA + " " + SCOPE_FILE + " openid email profile";
+  const FOLDER_NAME = "Hisab Kitab"; // visible folder in the user's My Drive, one JSON file per date
   const DRIVE_FILE = "hisab-kitab.json"; // lives in the user's own Drive, hidden app folder
 
   const $ = (id) => document.getElementById(id);
@@ -659,6 +664,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     deleted: [],          // ids removed, so other devices drop them too
     dirty: false,         // changes not yet in Drive
     account: null,        // { sub, email, name } when logged in with Google
+    mirror: { folderId: null, hashes: {} }, // visible "Hisab Kitab" folder: which dates are already written
     sync: "off",          // off | needs-login | saving | saved | error
     lastSync: 0,
     loaded: true,
@@ -679,7 +685,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   }
   function saveAccountLocal() {
     if (!state.account) return;
-    lsSet(ACCOUNT_KEY(state.account.sub), JSON.stringify({ entries: state.entries, deleted: state.deleted, dirty: state.dirty, lastSync: state.lastSync }));
+    lsSet(ACCOUNT_KEY(state.account.sub), JSON.stringify({ entries: state.entries, deleted: state.deleted, dirty: state.dirty, lastSync: state.lastSync, mirror: state.mirror }));
   }
   function saveCurrent() { if (state.account) saveAccountLocal(); else saveLocal(); }
   function lsRemove(k) { try { localStorage.removeItem(k); } catch {} }
@@ -705,7 +711,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   function showNote(text) { const n = $("note"); n.textContent = text; n.hidden = !text; }
 
   // ---------- Google login (token in memory only) ----------
-  let tokenClient = null, accessToken = null, tokenExp = 0, pendingToken = null;
+  let tokenClient = null, accessToken = null, tokenExp = 0, pendingToken = null, fileScopeOk = false;
   const hasToken = () => !!accessToken && Date.now() < tokenExp;
   function loadGis() {
     if (!GOOGLE_CLIENT_ID || document.getElementById("gis")) return;
@@ -723,9 +729,10 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       callback: (resp) => {
         const p = pendingToken; pendingToken = null;
         if (!p) return;
-        if (resp.error || !google.accounts.oauth2.hasGrantedAllScopes(resp, "https://www.googleapis.com/auth/drive.appdata")) {
+        if (resp.error || !google.accounts.oauth2.hasGrantedAllScopes(resp, SCOPE_APPDATA)) {
           p.rej({ code: resp.error ? "denied" : "no-drive" }); return;
         }
+        fileScopeOk = google.accounts.oauth2.hasGrantedAllScopes(resp, SCOPE_FILE);
         accessToken = resp.access_token;
         tokenExp = Date.now() + (Number(resp.expires_in || 3600) - 60) * 1000;
         p.res(accessToken);
@@ -762,11 +769,11 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     const r = await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(id) + "?alt=media");
     try { return await r.json(); } catch { return { entries: [], deleted: [] }; }
   }
-  async function driveCreate(body) {
+  async function driveCreate(body, name = DRIVE_FILE, parents = ["appDataFolder"]) {
     const b = "hk" + Math.random().toString(36).slice(2);
-    const meta = { name: DRIVE_FILE, parents: ["appDataFolder"], mimeType: "application/json" };
+    const meta = { name, parents, mimeType: "application/json" };
     const payload = "--" + b + "\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n" + JSON.stringify(meta) +
-      "\r\n--" + b + "\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify(body) + "\r\n--" + b + "--";
+      "\r\n--" + b + "\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify(body, null, 2) + "\r\n--" + b + "--";
     const r = await gfetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
       method: "POST", headers: { "Content-Type": "multipart/related; boundary=" + b }, body: payload,
     });
@@ -774,7 +781,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   }
   async function driveUpdate(id, body) {
     await gfetch("https://www.googleapis.com/upload/drive/v3/files/" + encodeURIComponent(id) + "?uploadType=media", {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body, null, 2),
     });
   }
 
@@ -802,6 +809,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       state.entries = m.entries; state.deleted = m.deleted;
       state.dirty = false; state.lastSync = Date.now(); state.sync = "saved";
       saveAccountLocal();
+      mirrorDays();
     } catch (e) {
       state.sync = e && e.code === "auth" ? "needs-login" : "error";
     } finally {
@@ -810,10 +818,108 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     }
   }
 
+  // ---------- visible "Hisab Kitab" folder: one JSON file per date ----------
+  let dayFileIds = null, mirrorBusy = false, mirrorAgain = false;
+  function dayHash(list) {
+    const str = JSON.stringify(list.map((e) => [e.id, e.type, e.amount, e.date, e.note || "", e.person || "", e.category || ""]).sort());
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+    return String(h >>> 0);
+  }
+  function dayDoc(date, list) {
+    const totals = { kharcha: 0, aamdani: 0, udhaarDiya: 0, udhaarLiya: 0, wapasMila: 0, wapasDiya: 0 };
+    const key = { kharcha: "kharcha", aamdani: "aamdani", diya: "udhaarDiya", liya: "udhaarLiya", mila: "wapasMila", lautaya: "wapasDiya" };
+    const entries = [...list].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map((e) => {
+      if (key[e.type]) totals[key[e.type]] = Math.round((totals[key[e.type]] + Number(e.amount)) * 100) / 100;
+      const o = { id: e.id, type: e.type, typeName: STR.en["type." + e.type] || e.type, amount: Number(e.amount) };
+      if (e.category) o.category = e.category;
+      if (e.person) o.person = e.person;
+      if (e.note) o.note = e.note;
+      if (e.createdAt) o.createdAt = new Date(e.createdAt).toISOString();
+      return o;
+    });
+    return { app: "hisab-kitab", date, updatedAt: new Date().toISOString(), totals, entries };
+  }
+  async function ensureFolder() {
+    if (state.mirror.folderId) {
+      try {
+        const r = await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(state.mirror.folderId) + "?fields=id,trashed");
+        const j = await r.json();
+        if (!j.trashed) return j.id;
+      } catch (e) { if (e && e.code === "auth") throw e; }
+    }
+    const q = encodeURIComponent("mimeType='application/vnd.google-apps.folder' and name='" + FOLDER_NAME + "' and trashed=false and 'root' in parents");
+    const r = await gfetch("https://www.googleapis.com/drive/v3/files?pageSize=5&fields=files(id)&q=" + q);
+    const j = await r.json();
+    let id = j.files && j.files[0] && j.files[0].id;
+    if (!id) {
+      const r2 = await gfetch("https://www.googleapis.com/drive/v3/files?fields=id", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: FOLDER_NAME, mimeType: "application/vnd.google-apps.folder" }),
+      });
+      id = (await r2.json()).id;
+    }
+    if (id !== state.mirror.folderId) { state.mirror = { folderId: id, hashes: {} }; dayFileIds = null; }
+    return id;
+  }
+  async function listDayFiles(folderId) {
+    const map = {};
+    let page = "";
+    do {
+      const q = encodeURIComponent("'" + folderId + "' in parents and trashed=false");
+      const r = await gfetch("https://www.googleapis.com/drive/v3/files?pageSize=1000&fields=nextPageToken,files(id,name)&q=" + q + (page ? "&pageToken=" + encodeURIComponent(page) : ""));
+      const j = await r.json();
+      for (const f of j.files || []) map[f.name] = f.id;
+      page = j.nextPageToken || "";
+    } while (page);
+    return map;
+  }
+  async function mirrorDays() {
+    if (!fileScopeOk || !state.account || !hasToken()) return;
+    if (mirrorBusy) { mirrorAgain = true; return; }
+    mirrorBusy = true;
+    try {
+      const folderId = await ensureFolder();
+      if (!dayFileIds) dayFileIds = await listDayFiles(folderId);
+      const byDate = new Map();
+      for (const e of state.entries) { if (!byDate.has(e.date)) byDate.set(e.date, []); byDate.get(e.date).push(e); }
+      const dates = [...new Set([...byDate.keys(), ...Object.keys(state.mirror.hashes)])].sort();
+      for (const date of dates) {
+        const list = byDate.get(date) || [];
+        const name = date + ".json";
+        const h = list.length ? dayHash(list) : "";
+        if (!list.length) {
+          if (dayFileIds[name]) {
+            try { await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(dayFileIds[name]), { method: "DELETE" }); }
+            catch (e) { if (e && e.code === "auth") throw e; }
+            delete dayFileIds[name];
+          }
+          delete state.mirror.hashes[date];
+          continue;
+        }
+        if (h === state.mirror.hashes[date] && dayFileIds[name]) continue;
+        const body = dayDoc(date, list);
+        if (dayFileIds[name]) {
+          try { await driveUpdate(dayFileIds[name], body); }
+          catch (e) { if (e && e.code === "http" && e.status === 404) dayFileIds[name] = await driveCreate(body, name, [folderId]); else throw e; }
+        } else dayFileIds[name] = await driveCreate(body, name, [folderId]);
+        state.mirror.hashes[date] = h;
+        saveAccountLocal();
+      }
+      saveAccountLocal();
+    } catch (e) {
+      if (e && e.code === "auth") { state.sync = "needs-login"; renderAccount(); }
+    } finally {
+      mirrorBusy = false;
+      if (mirrorAgain) { mirrorAgain = false; mirrorDays(); }
+    }
+  }
+
   function useAccount(acct) {
     const saved = loadAccountLocal(acct.sub);
     state.account = acct;
     state.entries = saved.entries; state.deleted = saved.deleted || []; state.dirty = !!saved.dirty; state.lastSync = saved.lastSync || 0;
+    state.mirror = saved.mirror && saved.mirror.hashes ? saved.mirror : { folderId: null, hashes: {} }; dayFileIds = null;
     fileId = null;
     lsSet(LAST_ACCOUNT_KEY, JSON.stringify(acct));
   }
@@ -823,8 +929,13 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     requestToken(state.account ? "" : "select_account").then(async () => {
       const r = await gfetch("https://www.googleapis.com/oauth2/v3/userinfo");
       const info = await r.json();
-      const acct = { sub: info.sub, email: info.email || "", name: info.given_name || info.name || info.email || tr("acc.you") };
-      if (!state.account || state.account.sub !== acct.sub) {
+      const clean = (v) => (v && v !== "null" && v !== "undefined" ? String(v) : "");
+      const acct = { sub: info.sub, email: clean(info.email), name: clean(info.given_name) || clean(info.name), picture: clean(info.picture) };
+      if (state.account && state.account.sub === acct.sub) {
+        // Same person: refresh name and photo in case they changed.
+        Object.assign(state.account, acct);
+        lsSet(LAST_ACCOUNT_KEY, JSON.stringify(state.account));
+      } else {
         const guest = loadLocal();
         useAccount(acct);
         if (guest.length) {
@@ -853,11 +964,27 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     try { if (accessToken && window.google) google.accounts.oauth2.revoke(accessToken, () => {}); } catch {}
     if (state.account) lsRemove(ACCOUNT_KEY(state.account.sub));
     lsRemove(LAST_ACCOUNT_KEY);
-    accessToken = null; tokenExp = 0; fileId = null;
+    accessToken = null; tokenExp = 0; fileId = null; dayFileIds = null; state.mirror = { folderId: null, hashes: {} };
     state.account = null; state.deleted = []; state.dirty = false; state.sync = "off";
     state.entries = loadLocal();
     showNote(tr("n.loggedOut"));
     render();
+  }
+
+  // Google photo of the signed-in user, or their first letter if there is no photo.
+  function displayName(a) {
+    const ok = (v) => v && v !== "null" && v !== "undefined";
+    return (ok(a.name) && a.name) || (ok(a.email) && a.email.split("@")[0]) || tr("acc.you");
+  }
+  function whoEl(a) {
+    const name = displayName(a);
+    const initial = h("span", { class: "initial", "aria-hidden": "true" }, (name.trim()[0] || "?").toUpperCase());
+    let pic = initial;
+    if (a.picture && /^https:\/\//.test(a.picture)) {
+      pic = h("img", { class: "avatar", src: a.picture, alt: "", referrerpolicy: "no-referrer", width: "28", height: "28",
+        onerror: (ev) => ev.target.replaceWith(initial) });
+    }
+    return h("span", { class: "who", title: a.email || name }, pic, h("span", { class: "nm" }, name));
   }
 
   function renderAccount() {
@@ -879,7 +1006,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     }[state.sync] || "";
     const needTap = state.sync === "needs-login" || state.sync === "error";
     box.replaceChildren(
-      h("span", { class: "who" }, state.account.name),
+      whoEl(state.account),
       label ? h("span", { class: "sync" + (state.sync === "error" ? " err" : "") }, label) : null,
       needTap ? h("button", { type: "button", onclick: () => { if (hasToken()) syncNow(); else login(); } }, state.sync === "error" ? tr("acc.retry") : tr("acc.sync")) : null,
       h("button", { type: "button", class: "ghost", onclick: logout }, tr("acc.logout")));
@@ -923,6 +1050,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   // ---------- render ----------
   function render() {
     renderAccount();
+    // Logged-in users are saved to Drive automatically, so the manual backup buttons only show without login.
+    $("exportBtn").hidden = $("importBtn").hidden = !!state.account;
     $("todayLabel").textContent = parseDate(todayStr()).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     renderForm();
     renderStats();
