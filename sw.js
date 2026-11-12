@@ -1,6 +1,6 @@
 // Hisab Kitab service worker: lets the app open offline and be installed.
 // Bump VERSION whenever index.html changes so phones pick up the new copy.
-const VERSION = "hk-v1";
+const VERSION = "hk-v2";
 const SHELL = [
   "./",
   "./index.html",
@@ -26,6 +26,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
+  // Only this site's own files and Google Fonts are saved. Google login and Drive calls always go to the network.
+  const url = new URL(req.url);
+  const isFont = url.host === "fonts.googleapis.com" || url.host === "fonts.gstatic.com";
+  if (url.origin !== self.location.origin && !isFont) return;
 
   // The page itself: try the network first so updates show up, fall back to the saved copy offline.
   if (req.mode === "navigate") {
