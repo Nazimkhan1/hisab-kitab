@@ -50,6 +50,9 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+img { max-width: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
@@ -66,6 +69,16 @@ header.cover p { margin: 4px 0 0; opacity: .85; font-size: .9rem; }
 .acct .sync.err { background: #FFE1DC; color: #8A1C12; }
 .acct button, .backup button.solid { font: inherit; font-size: .8rem; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--khata-ink); background: var(--khata-ink); color: var(--khata); cursor: pointer; font-weight: 600; }
 .acct button.ghost { background: transparent; color: var(--khata-ink); font-weight: 500; opacity: .9; }
+.head-top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 560px) { .head-top { justify-content: flex-start; } }
+.lang-pick select { font: inherit; font-size: .82rem; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--khata-ink); background: transparent; color: var(--khata-ink); cursor: pointer; }
+.lang-pick select option { color: var(--ink); background: var(--surface); }
+.amt, .stat .v { unicode-bidi: isolate; direction: ltr; }
+:root[lang="hi"] { --font-body: "Inter", "Noto Sans Devanagari", system-ui, sans-serif; }
+:root[lang="bn"] { --font-display: "Baloo Da 2", "Noto Sans Bengali", system-ui, sans-serif; --font-body: "Noto Sans Bengali", system-ui, sans-serif; }
+:root[lang="ur"] { --font-display: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif; --font-body: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif; }
+:root[lang="ur"] body { line-height: 2; }
+:root[lang="ur"] header.cover h1 { line-height: 1.6; }
 .backup { display: flex; gap: 6px; flex-wrap: wrap; }
 .backup button { font: inherit; font-size: .8rem; padding: 5px 10px; border-radius: 6px; border: 1px solid currentColor; background: transparent; color: var(--khata-ink); cursor: pointer; opacity: .9; }
 .backup button:hover { opacity: 1; }
@@ -92,8 +105,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 .field input, .field select { font: inherit; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; min-width: 0; }
 .field input:focus-visible, .field select:focus-visible, button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 .amount-input { position: relative; }
-.amount-input span { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-.amount-input input { padding-left: 26px; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.amount-input span { position: absolute; inset-inline-start: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.amount-input input { padding-inline-start: 26px; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .primary { font: inherit; font-weight: 600; padding: 11px; border-radius: 8px; border: 0; background: var(--khata); color: var(--khata-ink); cursor: pointer; }
 .primary:disabled { opacity: .6; cursor: default; }
@@ -114,7 +127,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
 .tabs button { font: inherit; font-weight: 500; padding: 8px 14px; border: 0; background: none; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .tabs button[aria-selected="true"] { color: var(--accent-text); border-bottom-color: var(--accent-text); }
-.tabs .month { margin-left: auto; padding-bottom: 6px; }
+.tabs .month { margin-inline-start: auto; padding-bottom: 6px; }
 .tabs .month input { font: inherit; font-size: .88rem; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
 
 .day { overflow: hidden; }
@@ -144,7 +157,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 .cat .amt { font-weight: 500; }
 
 .person { overflow: hidden; }
-.person-head { width: 100%; font: inherit; color: inherit; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 0; background: none; cursor: pointer; text-align: left; flex-wrap: wrap; }
+.person-head { width: 100%; font: inherit; color: inherit; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 0; background: none; cursor: pointer; text-align: start; flex-wrap: wrap; }
 .person-head .name { font-weight: 600; overflow-wrap: anywhere; }
 .bal { font-size: .85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bal.in { background: var(--jama-soft); color: var(--jama); }
@@ -162,7 +175,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 .install-sheet img { width: 56px; height: 56px; border-radius: 12px; grid-row: span 2; }
 .install-sheet b { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
 .install-sheet p { margin: 0; color: var(--muted); font-size: .88rem; }
-.install-sheet ol { grid-column: 1 / -1; margin: 8px 0 0; padding-left: 20px; font-size: .9rem; display: grid; gap: 4px; }
+.install-sheet ol { grid-column: 1 / -1; margin: 8px 0 0; padding-inline-start: 20px; font-size: .9rem; display: grid; gap: 4px; }
 .install-sheet .acts { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 10px; }
 .install-sheet .acts button { flex: 1; font: inherit; font-weight: 600; padding: 11px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
 .install-sheet .acts button.go { background: var(--khata); border-color: var(--khata); color: var(--khata-ink); }
@@ -175,16 +188,19 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 <header class="cover">
   <div class="wrap">
     <div>
-      <h1>Hisab Kitab</h1>
-      <p>Roz ka kharcha, aamdani aur len-den, ek jagah</p>
+      <h1 data-i18n="app.title">Hisab Kitab</h1>
+      <p data-i18n="app.tagline">Roz ka kharcha, aamdani aur len-den, ek jagah</p>
     </div>
     <div class="head-side">
-      <div class="today" id="todayLabel"></div>
+      <div class="head-top">
+        <div class="today" id="todayLabel"></div>
+        <label class="lang-pick"><select id="langSel" aria-label="Language / भाषा / ভাষা / زبان"></select></label>
+      </div>
       <div class="acct" id="acct"></div>
       <div class="backup">
-        <button type="button" id="installBtn" hidden>App install karo</button>
-        <button type="button" id="exportBtn">Backup lo</button>
-        <button type="button" id="importBtn">Backup se wapas lao</button>
+        <button type="button" id="installBtn" data-i18n="btn.install" hidden>App install karo</button>
+        <button type="button" id="exportBtn" data-i18n="btn.export">Backup lo</button>
+        <button type="button" id="importBtn" data-i18n="btn.import">Backup se wapas lao</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden>
       </div>
     </div>
@@ -195,47 +211,47 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   <div class="note" id="note" hidden></div>
 
   <form class="entry panel" id="entryForm" novalidate>
-    <h2>Nayi entry</h2>
-    <div class="types" id="types" role="group" aria-label="Entry ka type">
-      <div class="group-label">Roz ka hisab</div>
-      <button type="button" data-type="kharcha" class="out">Kharcha</button>
-      <button type="button" data-type="aamdani" class="in">Aamdani</button>
-      <div class="group-label">Len-den</div>
-      <button type="button" data-type="diya" class="out">Udhaar diya</button>
-      <button type="button" data-type="liya" class="in">Udhaar liya</button>
-      <button type="button" data-type="mila" class="in">Wapas mila</button>
-      <button type="button" data-type="lautaya" class="out">Wapas diya</button>
+    <h2 data-i18n="form.title">Nayi entry</h2>
+    <div class="types" id="types" role="group" data-i18n-aria="form.typesAria" aria-label="Entry ka type">
+      <div class="group-label" data-i18n="group.daily">Roz ka hisab</div>
+      <button type="button" data-type="kharcha" class="out" data-i18n="type.kharcha">Kharcha</button>
+      <button type="button" data-type="aamdani" class="in" data-i18n="type.aamdani">Aamdani</button>
+      <div class="group-label" data-i18n="group.lenden">Len-den</div>
+      <button type="button" data-type="diya" class="out" data-i18n="type.diya">Udhaar diya</button>
+      <button type="button" data-type="liya" class="in" data-i18n="type.liya">Udhaar liya</button>
+      <button type="button" data-type="mila" class="in" data-i18n="type.mila">Wapas mila</button>
+      <button type="button" data-type="lautaya" class="out" data-i18n="type.lautaya">Wapas diya</button>
     </div>
     <p class="hint" id="typeHint"></p>
 
     <div class="field">
-      <label for="amount">Rakam</label>
+      <label for="amount" data-i18n="f.amount">Rakam</label>
       <div class="amount-input"><span>₹</span><input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0" required></div>
     </div>
 
     <div class="field" id="personField" hidden>
-      <label for="person">Kiske saath</label>
-      <input id="person" list="peopleList" autocomplete="off" placeholder="Naam, jaise Ramesh">
+      <label for="person" data-i18n="f.person">Kiske saath</label>
+      <input id="person" list="peopleList" autocomplete="off" data-i18n-ph="f.personPh" placeholder="Naam, jaise Ramesh">
       <datalist id="peopleList"></datalist>
     </div>
 
     <div class="row2">
       <div class="field" id="categoryField">
-        <label for="category">Category</label>
+        <label for="category" data-i18n="f.category">Category</label>
         <select id="category"></select>
       </div>
       <div class="field">
-        <label for="date">Tareekh</label>
+        <label for="date" data-i18n="f.date">Tareekh</label>
         <input id="date" type="date" required>
       </div>
     </div>
 
     <div class="field">
-      <label for="note">Note (optional)</label>
-      <input id="noteInput" type="text" maxlength="120" placeholder="Jaise: sabzi, petrol, rent">
+      <label for="noteInput" data-i18n="f.note">Note (optional)</label>
+      <input id="noteInput" type="text" maxlength="120" data-i18n-ph="f.notePh" placeholder="Jaise: sabzi, petrol, rent">
     </div>
 
-    <button class="primary" id="saveBtn" type="submit">Entry jodo</button>
+    <button class="primary" id="saveBtn" type="submit" data-i18n="f.save">Entry jodo</button>
     <p class="form-msg" id="formMsg" role="status"></p>
   </form>
 
@@ -243,9 +259,9 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     <div class="stats" id="stats"></div>
 
     <div class="tabs" role="tablist">
-      <button role="tab" id="tab-roz" data-tab="roz" aria-selected="true">Roz ka hisab</button>
-      <button role="tab" id="tab-lenden" data-tab="lenden" aria-selected="false">Len-den</button>
-      <label class="month" id="monthWrap"><span class="sr" hidden>Mahina</span><input id="month" type="month" aria-label="Mahina chuno"></label>
+      <button role="tab" id="tab-roz" data-tab="roz" aria-selected="true" data-i18n="group.daily">Roz ka hisab</button>
+      <button role="tab" id="tab-lenden" data-tab="lenden" aria-selected="false" data-i18n="group.lenden">Len-den</button>
+      <label class="month" id="monthWrap"><input id="month" type="month" data-i18n-aria="f.monthAria" aria-label="Mahina chuno"></label>
     </div>
 
     <div id="view" class="list"></div>
@@ -255,16 +271,16 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 <div class="install-sheet" id="installSheet" role="dialog" aria-labelledby="installTitle" hidden>
   <div class="in">
     <img src="icons/icon-192.png" alt="">
-    <b id="installTitle">Hisab Kitab app install kariye</b>
+    <b id="installTitle" data-i18n="install.title">Hisab Kitab app install kariye</b>
     <p id="installText">Home screen se seedha khuliye, bina internet bhi chalega.</p>
     <ol id="iosSteps" hidden>
-      <li>Neeche ya upar <strong>Share</strong> button (&#x25A1;&#x2191;) dabaiye</li>
-      <li><strong>Add to Home Screen</strong> chuniye</li>
-      <li>Upar <strong>Add</strong> dabaiye</li>
+      <li data-i18n="install.step1">Share button (□↑) dabaiye</li>
+      <li data-i18n="install.step2">“Add to Home Screen” chuniye</li>
+      <li data-i18n="install.step3">Upar “Add” dabaiye</li>
     </ol>
     <div class="acts">
       <button type="button" id="installLater">Baad mein</button>
-      <button type="button" class="go" id="installGo">Install karo</button>
+      <button type="button" class="go" id="installGo" data-i18n="install.go">Install karo</button>
     </div>
   </div>
 </div>
@@ -294,8 +310,11 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   const DRIVE_FILE = "hisab-kitab.json"; // lives in the user's own Drive, hidden app folder
 
   const $ = (id) => document.getElementById(id);
-  const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 2 });
-  const money = (n) => inr.format(Math.abs(n));
+  let inr = null, inrLang = "";
+  const money = (n) => {
+    if (inrLang !== LANG) { inr = new Intl.NumberFormat(LANGS[LANG].locale, { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 2 }); inrLang = LANG; }
+    return inr.format(Math.abs(n));
+  };
 
   const pad = (n) => String(n).padStart(2, "0");
   const ymd = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
@@ -303,9 +322,9 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   const yesterdayStr = () => { const d = new Date(); d.setDate(d.getDate() - 1); return ymd(d); };
   const parseDate = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
   function dayLabel(s) {
-    if (s === todayStr()) return "Aaj";
-    if (s === yesterdayStr()) return "Kal";
-    return parseDate(s).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+    if (s === todayStr()) return tr("day.today");
+    if (s === yesterdayStr()) return tr("day.yesterday");
+    return parseDate(s).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "short" });
   }
 
   // Small DOM helper: never sets innerHTML from data.
@@ -323,6 +342,283 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 
   const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+  // ---------- languages ----------
+  const LANGS = {
+    hinglish: { name: "Hinglish", locale: "en-IN", html: "hi-Latn" },
+    en: { name: "English", locale: "en-IN", html: "en" },
+    hi: { name: "हिन्दी", locale: "hi-IN", html: "hi" },
+    bn: { name: "বাংলা", locale: "bn-IN", html: "bn" },
+    ur: { name: "اردو", locale: "ur-IN", html: "ur", rtl: true },
+  };
+  const FONT_CSS = {
+    hi: "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&display=swap",
+    bn: "https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700&family=Noto+Sans+Bengali:wght@400;500;600&display=swap",
+    ur: "https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600&display=swap",
+  };
+  const STR = {
+    hinglish: {
+      "app.title": "Hisab Kitab", "app.tagline": "Roz ka kharcha, aamdani aur len-den, ek jagah", "lang.label": "Bhasha",
+      "btn.install": "App install karo", "btn.export": "Backup lo", "btn.import": "Backup se wapas lao",
+      "form.title": "Nayi entry", "form.typesAria": "Entry ka type", "group.daily": "Roz ka hisab", "group.lenden": "Len-den",
+      "type.kharcha": "Kharcha", "type.aamdani": "Aamdani", "type.diya": "Udhaar diya", "type.liya": "Udhaar liya", "type.mila": "Wapas mila", "type.lautaya": "Wapas diya",
+      "hint.kharcha": "Apna kharcha: khana, bill, travel, shopping.", "hint.aamdani": "Salary, bonus ya koi bhi aane wala paisa.",
+      "hint.diya": "Kisi ko paise diye. Wo aapko lautayega.", "hint.liya": "Kisi se paise liye. Aapko lautane hain.",
+      "hint.mila": "Jisko udhaar diya tha, usne paise lautaye.", "hint.lautaya": "Jisse udhaar liya tha, use paise lautaye.",
+      "f.amount": "Rakam", "f.person": "Kiske saath", "f.personPh": "Naam, jaise Ramesh", "f.category": "Category", "f.date": "Tareekh",
+      "f.note": "Note (optional)", "f.notePh": "Jaise: sabzi, petrol, rent", "f.save": "Entry jodo", "f.monthAria": "Mahina chuno",
+      "install.title": "Hisab Kitab app install kariye", "install.text": "Home screen se seedha khuliye, bina internet bhi chalega.",
+      "install.ios": "iPhone par Safari mein in 3 steps se app home screen par aa jayega:",
+      "install.inapp": "Ye link app ke andar khula hai. Upar ⋮ ya … menu se “Open in Chrome” (iPhone par Safari) chuniye, phir install hoga.",
+      "install.step1": "Share button (□↑) dabaiye", "install.step2": "“Add to Home Screen” chuniye", "install.step3": "Upar “Add” dabaiye",
+      "install.later": "Baad mein", "install.ok": "Theek hai", "install.go": "Install karo", "install.done": "Hisab Kitab app install ho gaya. Ab home screen se kholiye.",
+      "day.today": "Aaj", "day.yesterday": "Kal",
+      "stat.todaySub": "{month} · aaj {amt}", "stat.lena": "Lena hai", "stat.dena": "Dena hai",
+      "stat.from1": "1 vyakti se", "stat.fromN": "{n} logon se", "stat.to1": "1 vyakti ko", "stat.toN": "{n} logon ko", "stat.fromNone": "Kisi se nahi", "stat.toNone": "Kisi ko nahi",
+      "row.confirm": "Hatana hai?", "row.yes": "Haan, hatao", "row.no": "Nahi", "row.del": "Entry hatao", "err.delete": "Entry hat nahi payi. Dobara try kariye.",
+      "empty.monthNow": "Is mahine ki koi entry nahi", "empty.monthOld": "Is mahine ki koi entry nahi mili",
+      "empty.monthNowSub": "Form mein rakam likhiye aur “{save}” dabaiye. Har din ka kharcha aur aamdani yahan tareekh ke hisab se dikhega.",
+      "empty.monthOldSub": "Upar se koi aur mahina chuniye.", "cats.title": "Kharcha kahan gaya", "day.out": "Gaya {amt}", "day.in": "Aaya {amt}",
+      "empty.lenden": "Abhi koi len-den nahi",
+      "empty.lendenSub": "Kisi ko udhaar diya ya kisi se liya? Form mein “{lent}” ya “{borrowed}” chuniye aur naam likhiye. Har vyakti ka baaki hisab yahan dikhega.",
+      "bal.lena": "Lena hai {amt}", "bal.dena": "Dena hai {amt}", "bal.zero": "Hisab barabar",
+      "act.mila": "Wapas mila likho", "act.lautaya": "Wapas diya likho", "act.diya": "Aur udhaar diya", "act.liya": "Aur udhaar liya",
+      "v.amount": "Rakam likhiye, 0 se zyada.", "v.date": "Tareekh chuniye.", "v.person": "Naam likhiye, kiske saath len-den hua.", "v.added": "{type} {amt} jud gaya.",
+      "err.quota": "Storage bhar gaya hai. Kuch purani entries hatakar dobara try kariye.", "err.save": "Entry save nahi hui. Dobara dabaiye.",
+      "bk.done": "Backup file download ho gayi ({n} entries).", "bk.restored": "{n} entries backup se wapas aa gayi.", "bk.none": "Backup mein koi nayi entry nahi mili.",
+      "bk.bad": "Ye file Hisab Kitab ka backup nahi lag rahi. Sahi .json file chuniye.",
+      "acc.local": "Hisab sirf is phone par", "acc.login": "Google se login", "acc.pending": "Sync baaki hai", "acc.tapSync": "Sync ke liye tap kariye",
+      "acc.saving": "Drive mein save ho raha hai…", "acc.saved": "Drive mein saved", "acc.error": "Sync nahi hua", "acc.retry": "Dobara try karo",
+      "acc.sync": "Sync karo", "acc.logout": "Logout", "acc.you": "Aap",
+      "n.mergedGuest": "Is phone par pehle se {n} entries thi. Wo aapke account mein jod di gayi.",
+      "n.noDrive": "Drive ki permission nahi mili. Login karte waqt Drive wala box tick kariye, tabhi hisab save hoga.",
+      "n.popup": "Google login ki window nahi khuli. Browser mein popup allow kariye.",
+      "n.loginFail": "Google login nahi ho paya. Internet check karke dobara try kariye.",
+      "n.logoutDirty": "Kuch entries abhi Drive mein save nahi hui. Pehle “{sync}” dabaiye, phir logout kariye.",
+      "n.loggedOut": "Logout ho gaya. Aapka hisab Google Drive mein safe hai, dobara login karke wapas milega.",
+      "n.gisFail": "Google login load nahi hua. Internet check kariye.",
+      "n.welcomeGoogle": "Google se login kariye, taaki aapka hisab aapke Google Drive mein save rahe aur phone badalne par bhi mile.",
+      "n.welcomeLocal": "Entries isi phone par save hoti hain. Browser ka data clear karne se pehle “{export}” se file save kar lijiye.",
+    },
+    en: {
+      "app.title": "Hisab Kitab", "app.tagline": "Daily expenses, income and loans in one place", "lang.label": "Language",
+      "btn.install": "Install app", "btn.export": "Download backup", "btn.import": "Restore backup",
+      "form.title": "New entry", "form.typesAria": "Entry type", "group.daily": "Daily", "group.lenden": "Loans",
+      "type.kharcha": "Expense", "type.aamdani": "Income", "type.diya": "Lent", "type.liya": "Borrowed", "type.mila": "Got back", "type.lautaya": "Paid back",
+      "hint.kharcha": "Your spending: food, bills, travel, shopping.", "hint.aamdani": "Salary, bonus or any money coming in.",
+      "hint.diya": "You gave someone money. They will pay you back.", "hint.liya": "You took money from someone. You have to pay it back.",
+      "hint.mila": "Someone you lent to paid you back.", "hint.lautaya": "You paid back someone you borrowed from.",
+      "f.amount": "Amount", "f.person": "With whom", "f.personPh": "Name, e.g. Ramesh", "f.category": "Category", "f.date": "Date",
+      "f.note": "Note (optional)", "f.notePh": "e.g. vegetables, petrol, rent", "f.save": "Add entry", "f.monthAria": "Choose month",
+      "install.title": "Install the Hisab Kitab app", "install.text": "Open it straight from your home screen. It works without internet too.",
+      "install.ios": "On iPhone, add it to your home screen from Safari in 3 steps:",
+      "install.inapp": "This link opened inside another app. Use the ⋮ or … menu to choose “Open in Chrome” (Safari on iPhone), then install.",
+      "install.step1": "Tap the Share button (□↑)", "install.step2": "Choose “Add to Home Screen”", "install.step3": "Tap “Add” at the top",
+      "install.later": "Later", "install.ok": "OK", "install.go": "Install", "install.done": "Hisab Kitab is installed. Open it from your home screen.",
+      "day.today": "Today", "day.yesterday": "Yesterday",
+      "stat.todaySub": "{month} · today {amt}", "stat.lena": "To receive", "stat.dena": "To pay",
+      "stat.from1": "from 1 person", "stat.fromN": "from {n} people", "stat.to1": "to 1 person", "stat.toN": "to {n} people", "stat.fromNone": "From no one", "stat.toNone": "To no one",
+      "row.confirm": "Delete this?", "row.yes": "Yes, delete", "row.no": "No", "row.del": "Delete entry", "err.delete": "Couldn't delete the entry. Try again.",
+      "empty.monthNow": "No entries this month", "empty.monthOld": "No entries found for this month",
+      "empty.monthNowSub": "Type an amount in the form and tap “{save}”. Each day's expenses and income will show here by date.",
+      "empty.monthOldSub": "Pick another month above.", "cats.title": "Where the money went", "day.out": "Out {amt}", "day.in": "In {amt}",
+      "empty.lenden": "No loans yet",
+      "empty.lendenSub": "Lent money to someone or borrowed from someone? Choose “{lent}” or “{borrowed}” in the form and type their name. Each person's balance will show here.",
+      "bal.lena": "To receive {amt}", "bal.dena": "To pay {amt}", "bal.zero": "Settled",
+      "act.mila": "Record money received", "act.lautaya": "Record money paid back", "act.diya": "Lent more", "act.liya": "Borrowed more",
+      "v.amount": "Enter an amount above 0.", "v.date": "Choose a date.", "v.person": "Type the person's name.", "v.added": "{type} {amt} added.",
+      "err.quota": "Storage is full. Delete some old entries and try again.", "err.save": "The entry wasn't saved. Tap again.",
+      "bk.done": "Backup file downloaded ({n} entries).", "bk.restored": "{n} entries restored from backup.", "bk.none": "No new entries found in the backup.",
+      "bk.bad": "This file doesn't look like a Hisab Kitab backup. Choose the right .json file.",
+      "acc.local": "Saved on this phone only", "acc.login": "Sign in with Google", "acc.pending": "Not synced yet", "acc.tapSync": "Tap to sync",
+      "acc.saving": "Saving to Drive…", "acc.saved": "Saved to Drive", "acc.error": "Sync failed", "acc.retry": "Try again",
+      "acc.sync": "Sync now", "acc.logout": "Sign out", "acc.you": "You",
+      "n.mergedGuest": "This phone already had {n} entries. They've been added to your account.",
+      "n.noDrive": "Drive permission wasn't given. Tick the Drive box when signing in so your records can be saved.",
+      "n.popup": "The Google sign-in window didn't open. Allow pop-ups in your browser.",
+      "n.loginFail": "Couldn't sign in with Google. Check your internet and try again.",
+      "n.logoutDirty": "Some entries aren't in Drive yet. Tap “{sync}” first, then sign out.",
+      "n.loggedOut": "Signed out. Your records are safe in Google Drive. Sign in again to get them back.",
+      "n.gisFail": "Google sign-in didn't load. Check your internet.",
+      "n.welcomeGoogle": "Sign in with Google so your records are saved in your Google Drive and stay with you if you change phones.",
+      "n.welcomeLocal": "Entries are saved on this phone. Before clearing browser data, save a file with “{export}”.",
+    },
+    hi: {
+      "app.title": "हिसाब किताब", "app.tagline": "रोज़ का खर्चा, आमदनी और लेन-देन, एक जगह", "lang.label": "भाषा",
+      "btn.install": "ऐप इंस्टॉल करें", "btn.export": "बैकअप लें", "btn.import": "बैकअप से वापस लाएँ",
+      "form.title": "नई एंट्री", "form.typesAria": "एंट्री का प्रकार", "group.daily": "रोज़ का हिसाब", "group.lenden": "लेन-देन",
+      "type.kharcha": "खर्चा", "type.aamdani": "आमदनी", "type.diya": "उधार दिया", "type.liya": "उधार लिया", "type.mila": "वापस मिला", "type.lautaya": "वापस दिया",
+      "hint.kharcha": "अपना खर्चा: खाना, बिल, सफ़र, शॉपिंग।", "hint.aamdani": "सैलरी, बोनस या कोई भी आने वाला पैसा।",
+      "hint.diya": "किसी को पैसे दिए। वो आपको लौटाएगा।", "hint.liya": "किसी से पैसे लिए। आपको लौटाने हैं।",
+      "hint.mila": "जिसको उधार दिया था, उसने पैसे लौटाए।", "hint.lautaya": "जिससे उधार लिया था, उसे पैसे लौटाए।",
+      "f.amount": "रकम", "f.person": "किसके साथ", "f.personPh": "नाम, जैसे रमेश", "f.category": "श्रेणी", "f.date": "तारीख़",
+      "f.note": "नोट (वैकल्पिक)", "f.notePh": "जैसे: सब्ज़ी, पेट्रोल, किराया", "f.save": "एंट्री जोड़ें", "f.monthAria": "महीना चुनें",
+      "install.title": "हिसाब किताब ऐप इंस्टॉल करें", "install.text": "होम स्क्रीन से सीधे खोलें, बिना इंटरनेट भी चलेगा।",
+      "install.ios": "iPhone पर Safari में इन 3 स्टेप से ऐप होम स्क्रीन पर आ जाएगा:",
+      "install.inapp": "यह लिंक किसी ऐप के अंदर खुला है। ऊपर ⋮ या … मेन्यू से “Open in Chrome” (iPhone पर Safari) चुनें, फिर इंस्टॉल होगा।",
+      "install.step1": "Share बटन (□↑) दबाएँ", "install.step2": "“Add to Home Screen” चुनें", "install.step3": "ऊपर “Add” दबाएँ",
+      "install.later": "बाद में", "install.ok": "ठीक है", "install.go": "इंस्टॉल करें", "install.done": "हिसाब किताब ऐप इंस्टॉल हो गया। अब होम स्क्रीन से खोलें।",
+      "day.today": "आज", "day.yesterday": "कल",
+      "stat.todaySub": "{month} · आज {amt}", "stat.lena": "लेना है", "stat.dena": "देना है",
+      "stat.from1": "1 व्यक्ति से", "stat.fromN": "{n} लोगों से", "stat.to1": "1 व्यक्ति को", "stat.toN": "{n} लोगों को", "stat.fromNone": "किसी से नहीं", "stat.toNone": "किसी को नहीं",
+      "row.confirm": "हटाना है?", "row.yes": "हाँ, हटाएँ", "row.no": "नहीं", "row.del": "एंट्री हटाएँ", "err.delete": "एंट्री हट नहीं पाई। दोबारा कोशिश करें।",
+      "empty.monthNow": "इस महीने की कोई एंट्री नहीं", "empty.monthOld": "इस महीने की कोई एंट्री नहीं मिली",
+      "empty.monthNowSub": "फ़ॉर्म में रकम लिखें और “{save}” दबाएँ। हर दिन का खर्चा और आमदनी यहाँ तारीख़ के हिसाब से दिखेगी।",
+      "empty.monthOldSub": "ऊपर से कोई और महीना चुनें।", "cats.title": "खर्चा कहाँ गया", "day.out": "गया {amt}", "day.in": "आया {amt}",
+      "empty.lenden": "अभी कोई लेन-देन नहीं",
+      "empty.lendenSub": "किसी को उधार दिया या किसी से लिया? फ़ॉर्म में “{lent}” या “{borrowed}” चुनें और नाम लिखें। हर व्यक्ति का बाकी हिसाब यहाँ दिखेगा।",
+      "bal.lena": "लेना है {amt}", "bal.dena": "देना है {amt}", "bal.zero": "हिसाब बराबर",
+      "act.mila": "वापस मिला लिखें", "act.lautaya": "वापस दिया लिखें", "act.diya": "और उधार दिया", "act.liya": "और उधार लिया",
+      "v.amount": "रकम लिखें, 0 से ज़्यादा।", "v.date": "तारीख़ चुनें।", "v.person": "नाम लिखें, किसके साथ लेन-देन हुआ।", "v.added": "{type} {amt} जुड़ गया।",
+      "err.quota": "स्टोरेज भर गया है। कुछ पुरानी एंट्री हटाकर दोबारा कोशिश करें।", "err.save": "एंट्री सेव नहीं हुई। दोबारा दबाएँ।",
+      "bk.done": "बैकअप फ़ाइल डाउनलोड हो गई ({n} एंट्री)।", "bk.restored": "{n} एंट्री बैकअप से वापस आ गईं।", "bk.none": "बैकअप में कोई नई एंट्री नहीं मिली।",
+      "bk.bad": "यह फ़ाइल हिसाब किताब का बैकअप नहीं लग रही। सही .json फ़ाइल चुनें।",
+      "acc.local": "हिसाब सिर्फ़ इस फ़ोन पर", "acc.login": "Google से लॉगिन", "acc.pending": "सिंक बाकी है", "acc.tapSync": "सिंक के लिए टैप करें",
+      "acc.saving": "Drive में सेव हो रहा है…", "acc.saved": "Drive में सेव", "acc.error": "सिंक नहीं हुआ", "acc.retry": "दोबारा कोशिश करें",
+      "acc.sync": "सिंक करें", "acc.logout": "लॉगआउट", "acc.you": "आप",
+      "n.mergedGuest": "इस फ़ोन पर पहले से {n} एंट्री थीं। वो आपके अकाउंट में जोड़ दी गईं।",
+      "n.noDrive": "Drive की अनुमति नहीं मिली। लॉगिन करते समय Drive वाला बॉक्स टिक करें, तभी हिसाब सेव होगा।",
+      "n.popup": "Google लॉगिन की विंडो नहीं खुली। ब्राउज़र में पॉपअप की अनुमति दें।",
+      "n.loginFail": "Google लॉगिन नहीं हो पाया। इंटरनेट देखकर दोबारा कोशिश करें।",
+      "n.logoutDirty": "कुछ एंट्री अभी Drive में सेव नहीं हुईं। पहले “{sync}” दबाएँ, फिर लॉगआउट करें।",
+      "n.loggedOut": "लॉगआउट हो गया। आपका हिसाब Google Drive में सुरक्षित है, दोबारा लॉगिन करके वापस मिलेगा।",
+      "n.gisFail": "Google लॉगिन लोड नहीं हुआ। इंटरनेट देखें।",
+      "n.welcomeGoogle": "Google से लॉगिन करें, ताकि आपका हिसाब आपके Google Drive में सेव रहे और फ़ोन बदलने पर भी मिले।",
+      "n.welcomeLocal": "एंट्री इसी फ़ोन पर सेव होती हैं। ब्राउज़र का डेटा मिटाने से पहले “{export}” से फ़ाइल सेव कर लें।",
+    },
+    bn: {
+      "app.title": "হিসাব কিতাব", "app.tagline": "রোজকার খরচ, আয় আর লেনদেন, এক জায়গায়", "lang.label": "ভাষা",
+      "btn.install": "অ্যাপ ইনস্টল করুন", "btn.export": "ব্যাকআপ নিন", "btn.import": "ব্যাকআপ থেকে ফেরত আনুন",
+      "form.title": "নতুন এন্ট্রি", "form.typesAria": "এন্ট্রির ধরন", "group.daily": "রোজকার হিসাব", "group.lenden": "লেনদেন",
+      "type.kharcha": "খরচ", "type.aamdani": "আয়", "type.diya": "ধার দিলাম", "type.liya": "ধার নিলাম", "type.mila": "ফেরত পেলাম", "type.lautaya": "ফেরত দিলাম",
+      "hint.kharcha": "নিজের খরচ: খাবার, বিল, যাতায়াত, কেনাকাটা।", "hint.aamdani": "বেতন, বোনাস বা যেকোনো আসা টাকা।",
+      "hint.diya": "কাউকে টাকা দিয়েছেন। সে আপনাকে ফেরত দেবে।", "hint.liya": "কারো কাছ থেকে টাকা নিয়েছেন। আপনাকে ফেরত দিতে হবে।",
+      "hint.mila": "যাকে ধার দিয়েছিলেন, সে টাকা ফেরত দিয়েছে।", "hint.lautaya": "যার কাছ থেকে ধার নিয়েছিলেন, তাকে টাকা ফেরত দিয়েছেন।",
+      "f.amount": "টাকার পরিমাণ", "f.person": "কার সাথে", "f.personPh": "নাম, যেমন রমেশ", "f.category": "বিভাগ", "f.date": "তারিখ",
+      "f.note": "নোট (ঐচ্ছিক)", "f.notePh": "যেমন: সবজি, পেট্রোল, ভাড়া", "f.save": "এন্ট্রি যোগ করুন", "f.monthAria": "মাস বেছে নিন",
+      "install.title": "হিসাব কিতাব অ্যাপ ইনস্টল করুন", "install.text": "হোম স্ক্রিন থেকে সরাসরি খুলুন, ইন্টারনেট ছাড়াও চলবে।",
+      "install.ios": "iPhone-এ Safari থেকে এই ৩টি ধাপে অ্যাপ হোম স্ক্রিনে চলে আসবে:",
+      "install.inapp": "লিংকটি অন্য একটি অ্যাপের ভেতরে খুলেছে। ওপরের ⋮ বা … মেনু থেকে “Open in Chrome” (iPhone-এ Safari) বেছে নিন, তারপর ইনস্টল হবে।",
+      "install.step1": "Share বোতাম (□↑) চাপুন", "install.step2": "“Add to Home Screen” বেছে নিন", "install.step3": "ওপরে “Add” চাপুন",
+      "install.later": "পরে", "install.ok": "ঠিক আছে", "install.go": "ইনস্টল করুন", "install.done": "হিসাব কিতাব অ্যাপ ইনস্টল হয়ে গেছে। এখন হোম স্ক্রিন থেকে খুলুন।",
+      "day.today": "আজ", "day.yesterday": "গতকাল",
+      "stat.todaySub": "{month} · আজ {amt}", "stat.lena": "পাওনা", "stat.dena": "দেনা",
+      "stat.from1": "১ জনের কাছে", "stat.fromN": "{n} জনের কাছে", "stat.to1": "১ জনকে", "stat.toN": "{n} জনকে", "stat.fromNone": "কারো কাছে নয়", "stat.toNone": "কাউকে নয়",
+      "row.confirm": "মুছবেন?", "row.yes": "হ্যাঁ, মুছুন", "row.no": "না", "row.del": "এন্ট্রি মুছুন", "err.delete": "এন্ট্রি মোছা গেল না। আবার চেষ্টা করুন।",
+      "empty.monthNow": "এই মাসে কোনো এন্ট্রি নেই", "empty.monthOld": "এই মাসের কোনো এন্ট্রি পাওয়া যায়নি",
+      "empty.monthNowSub": "ফর্মে টাকার পরিমাণ লিখে “{save}” চাপুন। প্রতিদিনের খরচ আর আয় এখানে তারিখ অনুযায়ী দেখাবে।",
+      "empty.monthOldSub": "ওপর থেকে অন্য মাস বেছে নিন।", "cats.title": "টাকা কোথায় খরচ হলো", "day.out": "গেছে {amt}", "day.in": "এসেছে {amt}",
+      "empty.lenden": "এখনো কোনো লেনদেন নেই",
+      "empty.lendenSub": "কাউকে ধার দিয়েছেন বা কারো কাছ থেকে নিয়েছেন? ফর্মে “{lent}” বা “{borrowed}” বেছে নিয়ে নাম লিখুন। প্রত্যেকের বাকি হিসাব এখানে দেখাবে।",
+      "bal.lena": "পাওনা {amt}", "bal.dena": "দেনা {amt}", "bal.zero": "হিসাব মিটে গেছে",
+      "act.mila": "ফেরত পেলাম লিখুন", "act.lautaya": "ফেরত দিলাম লিখুন", "act.diya": "আরও ধার দিলাম", "act.liya": "আরও ধার নিলাম",
+      "v.amount": "০-এর বেশি টাকার পরিমাণ লিখুন।", "v.date": "তারিখ বেছে নিন।", "v.person": "যার সাথে লেনদেন হয়েছে, তার নাম লিখুন।", "v.added": "{type} {amt} যোগ হয়েছে।",
+      "err.quota": "স্টোরেজ ভরে গেছে। কিছু পুরনো এন্ট্রি মুছে আবার চেষ্টা করুন।", "err.save": "এন্ট্রি সেভ হয়নি। আবার চাপুন।",
+      "bk.done": "ব্যাকআপ ফাইল ডাউনলোড হয়েছে ({n}টি এন্ট্রি)।", "bk.restored": "ব্যাকআপ থেকে {n}টি এন্ট্রি ফেরত এসেছে।", "bk.none": "ব্যাকআপে কোনো নতুন এন্ট্রি পাওয়া যায়নি।",
+      "bk.bad": "এই ফাইলটি হিসাব কিতাবের ব্যাকআপ মনে হচ্ছে না। সঠিক .json ফাইল বেছে নিন।",
+      "acc.local": "হিসাব শুধু এই ফোনে", "acc.login": "Google দিয়ে লগইন", "acc.pending": "সিঙ্ক বাকি", "acc.tapSync": "সিঙ্কের জন্য ট্যাপ করুন",
+      "acc.saving": "Drive-এ সেভ হচ্ছে…", "acc.saved": "Drive-এ সেভ হয়েছে", "acc.error": "সিঙ্ক হয়নি", "acc.retry": "আবার চেষ্টা করুন",
+      "acc.sync": "সিঙ্ক করুন", "acc.logout": "লগআউট", "acc.you": "আপনি",
+      "n.mergedGuest": "এই ফোনে আগে থেকে {n}টি এন্ট্রি ছিল। সেগুলো আপনার অ্যাকাউন্টে যোগ করা হয়েছে।",
+      "n.noDrive": "Drive-এর অনুমতি পাওয়া যায়নি। লগইনের সময় Drive-এর বাক্সে টিক দিন, তবেই হিসাব সেভ হবে।",
+      "n.popup": "Google লগইনের উইন্ডো খোলেনি। ব্রাউজারে পপ-আপ চালু করুন।",
+      "n.loginFail": "Google লগইন হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
+      "n.logoutDirty": "কিছু এন্ট্রি এখনো Drive-এ সেভ হয়নি। আগে “{sync}” চাপুন, তারপর লগআউট করুন।",
+      "n.loggedOut": "লগআউট হয়েছে। আপনার হিসাব Google Drive-এ নিরাপদ আছে, আবার লগইন করলে ফেরত পাবেন।",
+      "n.gisFail": "Google লগইন লোড হয়নি। ইন্টারনেট দেখুন।",
+      "n.welcomeGoogle": "Google দিয়ে লগইন করুন, যাতে আপনার হিসাব আপনার Google Drive-এ সেভ থাকে আর ফোন বদলালেও পাওয়া যায়।",
+      "n.welcomeLocal": "এন্ট্রি এই ফোনেই সেভ হয়। ব্রাউজারের ডেটা মোছার আগে “{export}” দিয়ে ফাইল সেভ করে রাখুন।",
+    },
+    ur: {
+      "app.title": "حساب کتاب", "app.tagline": "روز کا خرچہ، آمدنی اور لین دین، ایک جگہ", "lang.label": "زبان",
+      "btn.install": "ایپ انسٹال کریں", "btn.export": "بیک اپ لیں", "btn.import": "بیک اپ سے واپس لائیں",
+      "form.title": "نئی انٹری", "form.typesAria": "انٹری کی قسم", "group.daily": "روز کا حساب", "group.lenden": "لین دین",
+      "type.kharcha": "خرچہ", "type.aamdani": "آمدنی", "type.diya": "ادھار دیا", "type.liya": "ادھار لیا", "type.mila": "واپس ملا", "type.lautaya": "واپس دیا",
+      "hint.kharcha": "اپنا خرچہ: کھانا، بل، سفر، شاپنگ۔", "hint.aamdani": "تنخواہ، بونس یا کوئی بھی آنے والا پیسہ۔",
+      "hint.diya": "کسی کو پیسے دیے۔ وہ آپ کو لوٹائے گا۔", "hint.liya": "کسی سے پیسے لیے۔ آپ کو لوٹانے ہیں۔",
+      "hint.mila": "جسے ادھار دیا تھا، اس نے پیسے لوٹائے۔", "hint.lautaya": "جس سے ادھار لیا تھا، اسے پیسے لوٹائے۔",
+      "f.amount": "رقم", "f.person": "کس کے ساتھ", "f.personPh": "نام، جیسے رمیش", "f.category": "زمرہ", "f.date": "تاریخ",
+      "f.note": "نوٹ (اختیاری)", "f.notePh": "جیسے: سبزی، پیٹرول، کرایہ", "f.save": "انٹری شامل کریں", "f.monthAria": "مہینہ منتخب کریں",
+      "install.title": "حساب کتاب ایپ انسٹال کریں", "install.text": "ہوم اسکرین سے سیدھا کھولیں، بغیر انٹرنیٹ بھی چلے گی۔",
+      "install.ios": "iPhone پر Safari میں ان 3 مراحل سے ایپ ہوم اسکرین پر آ جائے گی:",
+      "install.inapp": "یہ لنک کسی ایپ کے اندر کھلا ہے۔ اوپر ⋮ یا … مینو سے “Open in Chrome” (iPhone پر Safari) منتخب کریں، پھر انسٹال ہوگی۔",
+      "install.step1": "Share بٹن (□↑) دبائیں", "install.step2": "“Add to Home Screen” منتخب کریں", "install.step3": "اوپر “Add” دبائیں",
+      "install.later": "بعد میں", "install.ok": "ٹھیک ہے", "install.go": "انسٹال کریں", "install.done": "حساب کتاب ایپ انسٹال ہو گئی۔ اب ہوم اسکرین سے کھولیں۔",
+      "day.today": "آج", "day.yesterday": "کل",
+      "stat.todaySub": "{month} · آج {amt}", "stat.lena": "لینا ہے", "stat.dena": "دینا ہے",
+      "stat.from1": "1 شخص سے", "stat.fromN": "{n} لوگوں سے", "stat.to1": "1 شخص کو", "stat.toN": "{n} لوگوں کو", "stat.fromNone": "کسی سے نہیں", "stat.toNone": "کسی کو نہیں",
+      "row.confirm": "ہٹانا ہے؟", "row.yes": "ہاں، ہٹائیں", "row.no": "نہیں", "row.del": "انٹری ہٹائیں", "err.delete": "انٹری ہٹ نہیں سکی۔ دوبارہ کوشش کریں۔",
+      "empty.monthNow": "اس مہینے کی کوئی انٹری نہیں", "empty.monthOld": "اس مہینے کی کوئی انٹری نہیں ملی",
+      "empty.monthNowSub": "فارم میں رقم لکھیں اور “{save}” دبائیں۔ ہر دن کا خرچہ اور آمدنی یہاں تاریخ کے حساب سے دکھے گی۔",
+      "empty.monthOldSub": "اوپر سے کوئی اور مہینہ منتخب کریں۔", "cats.title": "خرچہ کہاں گیا", "day.out": "گیا {amt}", "day.in": "آیا {amt}",
+      "empty.lenden": "ابھی کوئی لین دین نہیں",
+      "empty.lendenSub": "کسی کو ادھار دیا یا کسی سے لیا؟ فارم میں “{lent}” یا “{borrowed}” منتخب کریں اور نام لکھیں۔ ہر شخص کا باقی حساب یہاں دکھے گا۔",
+      "bal.lena": "لینا ہے {amt}", "bal.dena": "دینا ہے {amt}", "bal.zero": "حساب برابر",
+      "act.mila": "واپس ملا لکھیں", "act.lautaya": "واپس دیا لکھیں", "act.diya": "اور ادھار دیا", "act.liya": "اور ادھار لیا",
+      "v.amount": "رقم لکھیں، 0 سے زیادہ۔", "v.date": "تاریخ منتخب کریں۔", "v.person": "نام لکھیں، کس کے ساتھ لین دین ہوا۔", "v.added": "{type} {amt} شامل ہو گیا۔",
+      "err.quota": "اسٹوریج بھر گیا ہے۔ کچھ پرانی انٹریاں ہٹا کر دوبارہ کوشش کریں۔", "err.save": "انٹری محفوظ نہیں ہوئی۔ دوبارہ دبائیں۔",
+      "bk.done": "بیک اپ فائل ڈاؤن لوڈ ہو گئی ({n} انٹریاں)۔", "bk.restored": "{n} انٹریاں بیک اپ سے واپس آ گئیں۔", "bk.none": "بیک اپ میں کوئی نئی انٹری نہیں ملی۔",
+      "bk.bad": "یہ فائل حساب کتاب کا بیک اپ نہیں لگ رہی۔ صحیح .json فائل منتخب کریں۔",
+      "acc.local": "حساب صرف اس فون پر", "acc.login": "Google سے لاگ اِن", "acc.pending": "سنک باقی ہے", "acc.tapSync": "سنک کے لیے ٹیپ کریں",
+      "acc.saving": "Drive میں محفوظ ہو رہا ہے…", "acc.saved": "Drive میں محفوظ", "acc.error": "سنک نہیں ہوا", "acc.retry": "دوبارہ کوشش کریں",
+      "acc.sync": "سنک کریں", "acc.logout": "لاگ آؤٹ", "acc.you": "آپ",
+      "n.mergedGuest": "اس فون پر پہلے سے {n} انٹریاں تھیں۔ وہ آپ کے اکاؤنٹ میں شامل کر دی گئیں۔",
+      "n.noDrive": "Drive کی اجازت نہیں ملی۔ لاگ اِن کرتے وقت Drive والے خانے پر ٹِک کریں، تبھی حساب محفوظ ہوگا۔",
+      "n.popup": "Google لاگ اِن کی ونڈو نہیں کھلی۔ براؤزر میں پاپ اَپ کی اجازت دیں۔",
+      "n.loginFail": "Google لاگ اِن نہیں ہو سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔",
+      "n.logoutDirty": "کچھ انٹریاں ابھی Drive میں محفوظ نہیں ہوئیں۔ پہلے “{sync}” دبائیں، پھر لاگ آؤٹ کریں۔",
+      "n.loggedOut": "لاگ آؤٹ ہو گیا۔ آپ کا حساب Google Drive میں محفوظ ہے، دوبارہ لاگ اِن کر کے واپس ملے گا۔",
+      "n.gisFail": "Google لاگ اِن لوڈ نہیں ہوا۔ انٹرنیٹ چیک کریں۔",
+      "n.welcomeGoogle": "Google سے لاگ اِن کریں، تاکہ آپ کا حساب آپ کے Google Drive میں محفوظ رہے اور فون بدلنے پر بھی ملے۔",
+      "n.welcomeLocal": "انٹریاں اسی فون پر محفوظ ہوتی ہیں۔ براؤزر کا ڈیٹا صاف کرنے سے پہلے “{export}” سے فائل محفوظ کر لیں۔",
+    },
+  };
+  // Saved category values stay in Hinglish so old entries keep working; only the label changes.
+  const CAT_LABELS = {
+    en: { "Khana-peena": "Food", "Ghar ka saman": "Household", "Rent": "Rent", "Bills": "Bills", "Travel": "Travel", "Shopping": "Shopping", "Dawai": "Medicine", "Padhai": "Education", "Mobile/Internet": "Mobile/Internet", "Other": "Other", "Salary": "Salary", "Business": "Business", "Bonus": "Bonus", "Interest": "Interest", "Gift": "Gift" },
+    hi: { "Khana-peena": "खाना-पीना", "Ghar ka saman": "घर का सामान", "Rent": "किराया", "Bills": "बिल", "Travel": "सफ़र", "Shopping": "शॉपिंग", "Dawai": "दवाई", "Padhai": "पढ़ाई", "Mobile/Internet": "मोबाइल/इंटरनेट", "Other": "अन्य", "Salary": "सैलरी", "Business": "बिज़नेस", "Bonus": "बोनस", "Interest": "ब्याज", "Gift": "तोहफ़ा" },
+    bn: { "Khana-peena": "খাবার-দাবার", "Ghar ka saman": "ঘরের জিনিস", "Rent": "ভাড়া", "Bills": "বিল", "Travel": "যাতায়াত", "Shopping": "কেনাকাটা", "Dawai": "ওষুধ", "Padhai": "পড়াশোনা", "Mobile/Internet": "মোবাইল/ইন্টারনেট", "Other": "অন্যান্য", "Salary": "বেতন", "Business": "ব্যবসা", "Bonus": "বোনাস", "Interest": "সুদ", "Gift": "উপহার" },
+    ur: { "Khana-peena": "کھانا پینا", "Ghar ka saman": "گھر کا سامان", "Rent": "کرایہ", "Bills": "بل", "Travel": "سفر", "Shopping": "شاپنگ", "Dawai": "دوائی", "Padhai": "پڑھائی", "Mobile/Internet": "موبائل/انٹرنیٹ", "Other": "دیگر", "Salary": "تنخواہ", "Business": "کاروبار", "Bonus": "بونس", "Interest": "سود", "Gift": "تحفہ" },
+  };
+  function pickLang() {
+    let q = null;
+    try { q = new URLSearchParams(location.search).get("lang"); } catch {}
+    if (q && LANGS[q]) { lsSet("hisab-lang", q); return q; }
+    const saved = lsGet("hisab-lang");
+    if (saved && LANGS[saved]) return saved;
+    const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase();
+    if (nav.startsWith("bn")) return "bn";
+    if (nav.startsWith("ur")) return "ur";
+    if (nav.startsWith("hi")) return "hi";
+    return "hinglish";
+  }
+  let LANG = pickLang();
+  function tr(key, vars) {
+    let s = (STR[LANG] && STR[LANG][key]) || STR.hinglish[key] || key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? String(vars[k]) : m));
+    return s;
+  }
+  const typeLabel = (type) => tr("type." + type);
+  const catLabel = (c) => (CAT_LABELS[LANG] && CAT_LABELS[LANG][c]) || c;
+  const locale = () => LANGS[LANG].locale;
+  const fmtNum = (n) => new Intl.NumberFormat(locale()).format(n);
+
+  function applyLanguage() {
+    const L = LANGS[LANG];
+    document.documentElement.lang = L.html;
+    document.documentElement.dir = L.rtl ? "rtl" : "ltr";
+    if (FONT_CSS[LANG] && !document.getElementById("font-" + LANG)) {
+      const ln = document.createElement("link");
+      ln.id = "font-" + LANG; ln.rel = "stylesheet"; ln.href = FONT_CSS[LANG];
+      document.head.append(ln);
+    }
+    for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = tr(el.dataset.i18n);
+    for (const el of document.querySelectorAll("[data-i18n-ph]")) el.placeholder = tr(el.dataset.i18nPh);
+    for (const el of document.querySelectorAll("[data-i18n-aria]")) el.setAttribute("aria-label", tr(el.dataset.i18nAria));
+    const sel = document.getElementById("langSel");
+    if (!sel.options.length) for (const [k, v] of Object.entries(LANGS)) sel.append(new Option(v.name, k));
+    sel.value = LANG;
+  }
 
   // ---------- state ----------
   const state = {
@@ -383,7 +679,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     const sc = document.createElement("script");
     sc.id = "gis"; sc.src = "https://accounts.google.com/gsi/client"; sc.async = true;
     sc.onload = () => { setupGis(); renderAccount(); };
-    sc.onerror = () => { showNote("Google login load nahi hua. Internet check kariye."); };
+    sc.onerror = () => { showNote(tr("n.gisFail")); };
     document.head.append(sc);
   }
   function setupGis() {
@@ -494,7 +790,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     requestToken(state.account ? "" : "select_account").then(async () => {
       const r = await gfetch("https://www.googleapis.com/oauth2/v3/userinfo");
       const info = await r.json();
-      const acct = { sub: info.sub, email: info.email || "", name: info.given_name || info.name || info.email || "Aap" };
+      const acct = { sub: info.sub, email: info.email || "", name: info.given_name || info.name || info.email || tr("acc.you") };
       if (!state.account || state.account.sub !== acct.sub) {
         const guest = loadLocal();
         useAccount(acct);
@@ -502,7 +798,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
           const m = merge({ entries: state.entries, deleted: state.deleted }, { entries: guest });
           state.entries = m.entries; state.dirty = true;
           lsRemove(LOCAL_KEY);
-          showNote("Is phone par pehle se " + guest.length + " entries thi. Wo aapke account mein jod di gayi.");
+          showNote(tr("n.mergedGuest", { n: fmtNum(guest.length) }));
         } else showNote("");
         saveAccountLocal();
       }
@@ -510,23 +806,23 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       await syncNow();
     }).catch((e) => {
       const code = e && e.code;
-      if (code === "no-drive") showNote("Drive ki permission nahi mili. Login karte waqt Drive wala box tick kariye, tabhi hisab save hoga.");
+      if (code === "no-drive") showNote(tr("n.noDrive"));
       else if (code === "popup_closed" || code === "denied") showNote("");
-      else if (code === "popup_failed_to_open") showNote("Google login ki window nahi khuli. Browser mein popup allow kariye.");
-      else showNote("Google login nahi ho paya. Internet check karke dobara try kariye.");
+      else if (code === "popup_failed_to_open") showNote(tr("n.popup"));
+      else showNote(tr("n.loginFail"));
       renderAccount();
     });
   }
 
   function logout() {
-    if (state.dirty) { showNote("Kuch entries abhi Drive mein save nahi hui. Pehle “Sync karo” dabaiye, phir logout kariye."); return; }
+    if (state.dirty) { showNote(tr("n.logoutDirty", { sync: tr("acc.sync") })); return; }
     try { if (accessToken && window.google) google.accounts.oauth2.revoke(accessToken, () => {}); } catch {}
     if (state.account) lsRemove(ACCOUNT_KEY(state.account.sub));
     lsRemove(LAST_ACCOUNT_KEY);
     accessToken = null; tokenExp = 0; fileId = null;
     state.account = null; state.deleted = []; state.dirty = false; state.sync = "off";
     state.entries = loadLocal();
-    showNote("Logout ho gaya. Aapka hisab Google Drive mein safe hai, dobara login karke wapas milega.");
+    showNote(tr("n.loggedOut"));
     render();
   }
 
@@ -535,24 +831,24 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     if (!GOOGLE_CLIENT_ID) { box.replaceChildren(); return; }
     if (!state.account) {
       box.replaceChildren(
-        h("span", { class: "sync" }, "Hisab sirf is phone par"),
-        h("button", { type: "button", id: "loginBtn", onclick: login }, "Google se login"));
+        h("span", { class: "sync" }, tr("acc.local")),
+        h("button", { type: "button", id: "loginBtn", onclick: login }, tr("acc.login")));
       return;
     }
-    const time = state.lastSync ? new Date(state.lastSync).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }) : "";
+    const time = state.lastSync ? new Date(state.lastSync).toLocaleTimeString(locale(), { hour: "numeric", minute: "2-digit" }) : "";
     const label = {
-      "needs-login": state.dirty ? "Sync baaki hai" : "Sync ke liye tap kariye",
-      saving: "Drive mein save ho raha hai…",
-      saved: "Drive mein saved" + (time ? " · " + time : ""),
-      error: "Sync nahi hua",
+      "needs-login": state.dirty ? tr("acc.pending") : tr("acc.tapSync"),
+      saving: tr("acc.saving"),
+      saved: tr("acc.saved") + (time ? " · " + time : ""),
+      error: tr("acc.error"),
       off: "",
     }[state.sync] || "";
     const needTap = state.sync === "needs-login" || state.sync === "error";
     box.replaceChildren(
       h("span", { class: "who" }, state.account.name),
       label ? h("span", { class: "sync" + (state.sync === "error" ? " err" : "") }, label) : null,
-      needTap ? h("button", { type: "button", onclick: () => { if (hasToken()) syncNow(); else login(); } }, state.sync === "error" ? "Dobara try karo" : "Sync karo") : null,
-      h("button", { type: "button", class: "ghost", onclick: logout }, "Logout"));
+      needTap ? h("button", { type: "button", onclick: () => { if (hasToken()) syncNow(); else login(); } }, state.sync === "error" ? tr("acc.retry") : tr("acc.sync")) : null,
+      h("button", { type: "button", class: "ghost", onclick: logout }, tr("acc.logout")));
   }
 
   function init() {
@@ -563,8 +859,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       state.sync = "needs-login";
     } else {
       state.entries = loadLocal();
-      if (GOOGLE_CLIENT_ID) showNote(state.entries.length ? "" : "Google se login kariye, taaki aapka hisab aapke Google Drive mein save rahe aur phone badalne par bhi mile.");
-      else if (!state.entries.length) showNote("Entries isi phone par save hoti hain. Browser ka data clear karne se pehle “Backup lo” se file save kar lijiye.");
+      if (GOOGLE_CLIENT_ID) showNote(state.entries.length ? "" : tr("n.welcomeGoogle"));
+      else if (!state.entries.length) showNote(tr("n.welcomeLocal", { export: tr("btn.export") }));
     }
     loadGis();
     render();
@@ -590,31 +886,29 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   // ---------- render ----------
   function render() {
     renderAccount();
-    $("todayLabel").textContent = parseDate(todayStr()).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    $("todayLabel").textContent = parseDate(todayStr()).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     renderForm();
     renderStats();
     renderTabs();
     const view = $("view");
     view.replaceChildren();
-    if (!state.loaded && state.entries.length === 0) {
-      view.append(h("div", { class: "panel empty" }, h("b", null, "Hisab load ho raha hai…"), "Bas ek pal."));
-      return;
-    }
     if (state.tab === "roz") renderDaily(view); else renderLenden(view);
   }
 
   function renderForm() {
     const t = TYPES[state.type];
     for (const b of $("types").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.type === state.type));
-    $("typeHint").textContent = t.hint;
+    $("typeHint").textContent = tr("hint." + state.type);
     $("personField").hidden = !t.person;
     const cats = CATS[state.type];
     $("categoryField").hidden = !cats;
     if (cats) {
       const sel = $("category");
-      if (sel.dataset.for !== state.type) {
-        sel.replaceChildren(...cats.map((c) => h("option", { value: c }, c)));
-        sel.dataset.for = state.type;
+      if (sel.dataset.for !== state.type + LANG) {
+        const keep = sel.value;
+        sel.replaceChildren(...cats.map((c) => h("option", { value: c }, catLabel(c))));
+        if (cats.includes(keep)) sel.value = keep;
+        sel.dataset.for = state.type + LANG;
       }
     }
     const dl = $("peopleList");
@@ -634,13 +928,13 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     }
     let lena = 0, dena = 0, lenaN = 0, denaN = 0;
     for (const p of people()) { if (p.bal > 0) { lena += p.bal; lenaN++; } else if (p.bal < 0) { dena += -p.bal; denaN++; } }
-    const monthName = parseDate(m + "-01").toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+    const monthName = parseDate(m + "-01").toLocaleDateString(locale(), { month: "short", year: "numeric" });
     const stat = (k, v, cls, s) => h("div", { class: "panel stat" }, h("div", { class: "k" }, k), h("div", { class: "v " + cls }, v), h("div", { class: "s" }, s));
     $("stats").replaceChildren(
-      stat("Kharcha", money(kharcha), "out", monthName + " · aaj " + money(aajKharcha)),
-      stat("Aamdani", money(aamdani), "in", monthName),
-      stat("Lena hai", money(lena), "in", lenaN ? lenaN + (lenaN === 1 ? " vyakti se" : " logon se") : "Kisi se nahi"),
-      stat("Dena hai", money(dena), "out", denaN ? denaN + (denaN === 1 ? " vyakti ko" : " logon ko") : "Kisi ko nahi"),
+      stat(typeLabel("kharcha"), money(kharcha), "out", tr("stat.todaySub", { month: monthName, amt: money(aajKharcha) })),
+      stat(typeLabel("aamdani"), money(aamdani), "in", monthName),
+      stat(tr("stat.lena"), money(lena), "in", lenaN ? (lenaN === 1 ? tr("stat.from1") : tr("stat.fromN", { n: fmtNum(lenaN) })) : tr("stat.fromNone")),
+      stat(tr("stat.dena"), money(dena), "out", denaN ? (denaN === 1 ? tr("stat.to1") : tr("stat.toN", { n: fmtNum(denaN) })) : tr("stat.toNone")),
     );
   }
 
@@ -651,20 +945,21 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   }
 
   function entryRow(e, showPerson) {
-    const t = TYPES[e.type] || { label: e.type, dir: -1 };
+    const t = TYPES[e.type] || { dir: -1 };
     const cls = t.dir > 0 ? "in" : "out";
-    const title = e.note || (t.person ? (t.label + (showPerson && e.person ? " · " + e.person : "")) : (e.category || t.label));
+    const label = typeLabel(e.type);
+    const title = e.note || (t.person ? (label + (showPerson && e.person ? " · " + e.person : "")) : (e.category ? catLabel(e.category) : label));
     const meta = [];
     if (t.person && e.person && showPerson && e.note) meta.push(e.person);
-    if (!t.person && e.category && e.note) meta.push(e.category);
+    if (!t.person && e.category && e.note) meta.push(catLabel(e.category));
     if (!showPerson) meta.push(dayLabel(e.date));
     const right = state.confirmId === e.id
-      ? h("div", { class: "confirm" }, "Hatana hai?",
-          h("button", { type: "button", class: "danger", onclick: () => doDelete(e.id) }, "Haan, hatao"),
-          h("button", { type: "button", onclick: () => { state.confirmId = null; render(); } }, "Nahi"))
-      : h("button", { type: "button", class: "icon-btn", "aria-label": "Entry hatao", title: "Entry hatao", onclick: () => { state.confirmId = e.id; render(); } }, "×");
+      ? h("div", { class: "confirm" }, tr("row.confirm"),
+          h("button", { type: "button", class: "danger", onclick: () => doDelete(e.id) }, tr("row.yes")),
+          h("button", { type: "button", onclick: () => { state.confirmId = null; render(); } }, tr("row.no")))
+      : h("button", { type: "button", class: "icon-btn", "aria-label": tr("row.del"), title: tr("row.del"), onclick: () => { state.confirmId = e.id; render(); } }, "×");
     return h("div", { class: "entry-row" },
-      h("span", { class: "pill " + cls }, t.label),
+      h("span", { class: "pill " + cls }, label),
       h("div", { class: "desc" }, h("div", { class: "t" }, title), meta.length ? h("div", { class: "m" }, meta.join(" · ")) : null),
       h("span", { class: "amt " + cls }, (t.dir > 0 ? "+" : "−") + money(e.amount)),
       right);
@@ -672,7 +967,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
 
   async function doDelete(id) {
     state.confirmId = null;
-    try { await store.remove(id); } catch { showNote("Entry hat nahi payi. Dobara try kariye."); }
+    try { await store.remove(id); } catch { showNote(tr("err.delete")); }
     render();
   }
 
@@ -681,8 +976,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     if (!list.length) {
       const isNow = state.month === todayStr().slice(0, 7);
       view.append(h("div", { class: "panel empty" },
-        h("b", null, isNow ? "Is mahine ki koi entry nahi" : "Is mahine ki koi entry nahi mili"),
-        isNow ? "Bagal wale form mein rakam likhiye aur “Entry jodo” dabaiye. Har din ka kharcha aur aamdani yahan tareekh ke hisab se dikhega." : "Upar se koi aur mahina chuniye."));
+        h("b", null, isNow ? tr("empty.monthNow") : tr("empty.monthOld")),
+        isNow ? tr("empty.monthNowSub", { save: tr("f.save") }) : tr("empty.monthOldSub")));
       return;
     }
     // Category breakdown of this month's kharcha
@@ -693,9 +988,9 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       const rows = [...byCat.entries()].sort((a, b) => b[1] - a[1]);
       const max = rows[0][1];
       view.append(h("div", { class: "panel cats" },
-        h("div", { class: "section-title" }, "Kharcha kahan gaya"),
+        h("div", { class: "section-title" }, tr("cats.title")),
         rows.map(([c, a]) => h("div", { class: "cat" },
-          h("span", null, c),
+          h("span", null, catLabel(c)),
           h("div", { class: "bar", title: Math.round((a / total) * 100) + "%" }, h("i", { style: "width:" + Math.max(3, (a / max) * 100) + "%" })),
           h("span", { class: "amt" }, money(a))))));
     }
@@ -705,8 +1000,8 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
       let out = 0, inn = 0;
       for (const e of items) { const t = TYPES[e.type]; if (!t) continue; if (t.dir > 0) inn += Number(e.amount); else out += Number(e.amount); }
       const parts = [];
-      if (out) parts.push("Gaya " + money(out));
-      if (inn) parts.push("Aaya " + money(inn));
+      if (out) parts.push(tr("day.out", { amt: money(out) }));
+      if (inn) parts.push(tr("day.in", { amt: money(inn) }));
       view.append(h("div", { class: "panel day" },
         h("div", { class: "day-head" }, h("b", null, dayLabel(date)), h("span", { class: "tot" }, parts.join(" · "))),
         items.map((e) => entryRow(e, true))));
@@ -717,24 +1012,24 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     const ps = people().sort((a, b) => (b.bal !== 0) - (a.bal !== 0) || Math.abs(b.bal) - Math.abs(a.bal) || a.name.localeCompare(b.name));
     if (!ps.length) {
       view.append(h("div", { class: "panel empty" },
-        h("b", null, "Abhi koi len-den nahi"),
-        "Kisi ko udhaar diya ya kisi se liya? Form mein “Udhaar diya” ya “Udhaar liya” chuniye aur naam likhiye. Har vyakti ka baaki hisab yahan dikhega."));
+        h("b", null, tr("empty.lenden")),
+        tr("empty.lendenSub", { lent: typeLabel("diya"), borrowed: typeLabel("liya") })));
       return;
     }
     for (const p of ps) {
       const open = state.openPerson === p.key;
-      const balEl = p.bal > 0 ? h("span", { class: "bal in" }, "Lena hai " + money(p.bal))
-        : p.bal < 0 ? h("span", { class: "bal out" }, "Dena hai " + money(p.bal))
-        : h("span", { class: "bal zero" }, "Hisab barabar");
+      const balEl = p.bal > 0 ? h("span", { class: "bal in" }, tr("bal.lena", { amt: money(p.bal) }))
+        : p.bal < 0 ? h("span", { class: "bal out" }, tr("bal.dena", { amt: money(p.bal) }))
+        : h("span", { class: "bal zero" }, tr("bal.zero"));
       const card = h("div", { class: "panel person" },
         h("button", { type: "button", class: "person-head", "aria-expanded": String(open), onclick: () => { state.openPerson = open ? null : p.key; render(); } },
           h("span", { class: "name" }, p.name), balEl));
       if (open) {
         const actions = h("div", { class: "person-actions" });
-        if (p.bal > 0) actions.append(h("button", { type: "button", onclick: () => prefill("mila", p.name, p.bal) }, "Wapas mila likho"));
-        if (p.bal < 0) actions.append(h("button", { type: "button", onclick: () => prefill("lautaya", p.name, -p.bal) }, "Wapas diya likho"));
-        actions.append(h("button", { type: "button", onclick: () => prefill("diya", p.name) }, "Aur udhaar diya"));
-        actions.append(h("button", { type: "button", onclick: () => prefill("liya", p.name) }, "Aur udhaar liya"));
+        if (p.bal > 0) actions.append(h("button", { type: "button", onclick: () => prefill("mila", p.name, p.bal) }, tr("act.mila")));
+        if (p.bal < 0) actions.append(h("button", { type: "button", onclick: () => prefill("lautaya", p.name, -p.bal) }, tr("act.lautaya")));
+        actions.append(h("button", { type: "button", onclick: () => prefill("diya", p.name) }, tr("act.diya")));
+        actions.append(h("button", { type: "button", onclick: () => prefill("liya", p.name) }, tr("act.liya")));
         card.append(h("div", { class: "person-body" }, actions, p.entries.map((e) => entryRow(e, false))));
       }
       view.append(card);
@@ -772,9 +1067,9 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     const amount = Math.round(parseFloat($("amount").value) * 100) / 100;
     const date = $("date").value;
     const person = $("person").value.trim().replace(/\s+/g, " ");
-    if (!(amount > 0)) { say("Rakam likhiye, 0 se zyada.", "err"); $("amount").focus(); return; }
-    if (!date) { say("Tareekh chuniye.", "err"); $("date").focus(); return; }
-    if (t.person && !person) { say("Naam likhiye, kiske saath len-den hua.", "err"); $("person").focus(); return; }
+    if (!(amount > 0)) { say(tr("v.amount"), "err"); $("amount").focus(); return; }
+    if (!date) { say(tr("v.date"), "err"); $("date").focus(); return; }
+    if (t.person && !person) { say(tr("v.person"), "err"); $("person").focus(); return; }
     const doc = { type: state.type, amount, date, note: $("noteInput").value.trim(), createdAt: Date.now() };
     if (t.person) {
       // Reuse the existing spelling for a known person.
@@ -790,11 +1085,11 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     try {
       await store.add(doc);
       $("amount").value = ""; $("noteInput").value = "";
-      say(t.label + " " + money(amount) + " jud gaya.", "ok");
+      say(tr("v.added", { type: typeLabel(state.type), amt: money(amount) }), "ok");
       if (date.slice(0, 7) !== state.month && state.tab === "roz") { state.month = date.slice(0, 7); render(); }
       $("amount").focus();
     } catch (err) {
-      say(err && err.code === "quota_exceeded" ? "Storage bhar gaya hai. Kuch purani entries hatakar dobara try kariye." : "Entry save nahi hui. Internet check karke dobara dabaiye.", "err");
+      say(err && err.code === "quota_exceeded" ? tr("err.quota") : tr("err.save"), "err");
     } finally { btn.disabled = false; }
   });
 
@@ -804,7 +1099,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     const a = h("a", { href: url, download: "hisab-kitab-backup-" + todayStr() + ".json" });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showNote("Backup file download ho gayi (" + state.entries.length + " entries).");
+    showNote(tr("bk.done", { n: fmtNum(state.entries.length) }));
   });
   $("importBtn").addEventListener("click", () => $("importFile").click());
   $("importFile").addEventListener("change", async (ev) => {
@@ -825,14 +1120,25 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
         added++;
       }
       if (added) changed();
-      showNote(added ? added + " entries backup se wapas aa gayi." : "Backup mein koi nayi entry nahi mili.");
+      showNote(added ? tr("bk.restored", { n: fmtNum(added) }) : tr("bk.none"));
       render();
     } catch {
-      showNote("Ye file Hisab Kitab ka backup nahi lag rahi. Sahi .json file chuniye.");
+      showNote(tr("bk.bad"));
     }
   });
 
+  $("langSel").addEventListener("change", (ev) => {
+    if (!LANGS[ev.target.value]) return;
+    LANG = ev.target.value; lsSet("hisab-lang", LANG);
+    applyLanguage();
+    $("formMsg").textContent = "";
+    showNote("");
+    render();
+    if (!$("installSheet").hidden && sheetKind) { $("installSheet").hidden = true; showSheet(sheetKind); }
+  });
+
   $("date").value = todayStr();
+  applyLanguage();
   render();
   init();
 
@@ -845,24 +1151,23 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const inAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line\/|Snapchat|GSA\//.test(ua);
   const recentlyDismissed = () => { const t = Number(lsGet(DISMISS_KEY) || 0); return t && Date.now() - t < 3 * 24 * 3600 * 1000; };
-  let installEvt = null;
+  let installEvt = null, sheetKind = null;
 
   function showSheet(kind) {
     if (isStandalone() || recentlyDismissed()) return;
     const ios = kind === "ios", inapp = kind === "inapp";
     $("iosSteps").hidden = !ios;
     $("installGo").hidden = ios || inapp;
-    $("installText").textContent = inapp
-      ? "Ye link app ke andar khula hai. Upar ⋮ ya … menu se “Open in Chrome” (iPhone par Safari) chuniye, phir install hoga."
-      : ios ? "iPhone par Safari mein in 3 steps se app home screen par aa jayega:" : "Home screen se seedha khuliye, bina internet bhi chalega.";
-    $("installLater").textContent = ios || inapp ? "Theek hai" : "Baad mein";
+    sheetKind = kind;
+    $("installText").textContent = inapp ? tr("install.inapp") : ios ? tr("install.ios") : tr("install.text");
+    $("installLater").textContent = ios || inapp ? tr("install.ok") : tr("install.later");
     $("installSheet").hidden = false;
     $("installBtn").hidden = !installEvt;
   }
   function hideSheet(remember) { $("installSheet").hidden = true; if (remember) lsSet(DISMISS_KEY, String(Date.now())); }
 
   window.addEventListener("beforeinstallprompt", (ev) => { ev.preventDefault(); installEvt = ev; $("installBtn").hidden = false; showSheet("android"); });
-  window.addEventListener("appinstalled", () => { installEvt = null; $("installBtn").hidden = true; hideSheet(false); showNote("Hisab Kitab app install ho gaya. Ab home screen se kholiye."); });
+  window.addEventListener("appinstalled", () => { installEvt = null; $("installBtn").hidden = true; hideSheet(false); showNote(tr("install.done")); });
   async function doInstall() {
     if (!installEvt) return;
     const ev = installEvt; installEvt = null;
