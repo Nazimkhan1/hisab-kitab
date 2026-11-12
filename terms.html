@@ -45,8 +45,8 @@ a { color: var(--khata); }
   <ul>
     <li><strong>The app maker has no access.</strong> The person who made the app has no admin panel, no user list and no way to open, change or delete anyone's records. Everything runs on your phone and goes straight to your own Drive.</li>
     <li><strong>No server of ours.</strong> The app is a web page that runs on your phone. There is no Hisab Kitab server or database that holds anyone's entries, so there is nothing of yours for us to leak.</li>
-    <li><strong>Your own Google Drive.</strong> If you sign in with Google, your entries are saved in <em>your</em> Google Drive: a “Hisab Kitab” folder with one file per date that you can open yourself, plus a hidden copy used for syncing. Both are protected by your Google account, including any 2-step verification you have turned on.</li>
-    <li><strong>Limited permission.</strong> The app asks only for <code>drive.appdata</code> and <code>drive.file</code>. These let it use only the files and folder it creates itself. It cannot see, open or change your photos, documents or any other Drive files.</li>
+    <li><strong>Your own Google Drive.</strong> If you sign in with Google, your entries are saved in <em>your</em> Google Drive: a “Hisab Kitab” folder with one file per date that you can open yourself, plus a <code>_sync-data.json</code> file used for syncing. They are protected by your Google account, including any 2-step verification you have turned on.</li>
+    <li><strong>Limited permission.</strong> The app asks for one Drive permission, <code>drive.file</code>. It lets the app use only the files and folder it creates itself. It cannot see, open or change your photos, documents or any other Drive files.</li>
     <li><strong>Sign-in by Google.</strong> You sign in on Google's own screen. The app never sees your Google password.</li>
     <li><strong>Short-lived access.</strong> The access Google gives the app expires after about an hour and is kept only in memory. It is not saved on the device or sent anywhere else.</li>
     <li><strong>Encrypted connection.</strong> The app is served over HTTPS, and Google Drive uses encrypted connections, so data moving between your phone and Drive is encrypted on the way.</li>
@@ -61,7 +61,7 @@ a { color: var(--khata); }
     <li>Delete any entry inside the app.</li>
     <li>Download a backup file with “Backup lo” and restore it with “Backup se wapas lao”.</li>
     <li>Open, download or delete your daily files in the “Hisab Kitab” folder in My Drive.</li>
-    <li>Delete everything the app saved in Drive: delete the “Hisab Kitab” folder, then <a href="https://drive.google.com/drive/settings" target="_blank" rel="noopener">Google Drive settings</a> → Manage apps → Hisab Kitab → “Delete hidden app data”.</li>
+    <li>Delete everything the app saved in Drive: delete the “Hisab Kitab” folder.</li>
     <li>Remove the app's access to your Google account: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
   </ul>
 
