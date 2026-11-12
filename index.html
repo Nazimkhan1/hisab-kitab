@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Hisab Kitab</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8E1230">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hisab Kitab">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap">
@@ -157,6 +164,7 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
     <div class="head-side">
       <div class="today" id="todayLabel"></div>
       <div class="backup">
+        <button type="button" id="installBtn" hidden>App install karo</button>
         <button type="button" id="exportBtn">Backup lo</button>
         <button type="button" id="importBtn">Backup se wapas lao</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden>
@@ -601,6 +609,20 @@ form.entry h2, .section-title { font-family: var(--font-display); font-weight: 6
   $("date").value = todayStr();
   render();
   init();
+
+  let installEvt = null;
+  window.addEventListener("beforeinstallprompt", (ev) => { ev.preventDefault(); installEvt = ev; $("installBtn").hidden = false; });
+  window.addEventListener("appinstalled", () => { installEvt = null; $("installBtn").hidden = true; showNote("Hisab Kitab app install ho gaya. Ab home screen se kholiye."); });
+  $("installBtn").addEventListener("click", async () => {
+    if (!installEvt) return;
+    installEvt.prompt();
+    try { await installEvt.userChoice; } catch {}
+    installEvt = null; $("installBtn").hidden = true;
+  });
+
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 })();
 </script>
 </body>
