@@ -90,6 +90,12 @@ A folder named **"Hisab Kitab"** in the user's **My Drive** holds:
 ## 3. App features
 
 - **Nayi entry:** Kharcha, Aamdani, Udhaar diya, Udhaar liya, Wapas mila, Wapas diya. Each entry has an amount, a date, a category or person, and a note.
+- **Voice entry (🎤 Bol kar likho):**
+  - The user speaks, e.g. "Sabzi 250", "Ramesh ko 2000 udhaar diya" or "kal petrol 300", and the form fills itself (type, amount, person, category, date, note).
+  - The user checks the form and taps "Entry jodo". Nothing is saved automatically.
+  - Uses the browser's Web Speech API (`SpeechRecognition`), with the speech language following the app language (hi-IN, en-IN, bn-IN, ur-IN).
+  - The sentence is understood by the `VOICE.parse()` keyword parser in `index.html`. It handles Latin, Devanagari, Bangla and Urdu text.
+  - The mic button is hidden where the browser has no speech support (for example Firefox).
 - **Roz ka hisab:** entries for each month grouped by date, with a "Kharcha kahan gaya" category breakdown.
 - **Len-den:** each person's balance (Lena hai / Dena hai) with quick buttons to record money returned.
 - **Statement (bank style):**
