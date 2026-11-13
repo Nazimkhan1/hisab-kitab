@@ -96,6 +96,11 @@ A folder named **"Hisab Kitab"** in the user's **My Drive** holds:
   - Uses the browser's Web Speech API (`SpeechRecognition`), with the speech language following the app language (hi-IN, en-IN, bn-IN, ur-IN).
   - The sentence is understood by the `VOICE.parse()` keyword parser in `index.html`. It handles Latin, Devanagari, Bangla and Urdu text.
   - The mic button is hidden where the browser has no speech support (for example Firefox).
+  - **Several items in one sentence:** "Pyaj 1 kg 60, aalu 1 kg 30, bhindi 1 kg 70" opens a review list.
+    - Each item gets its own name, quantity, amount and category, and the user can edit any of them before saving.
+    - "N entry jodo" adds them all as separate kharcha entries (`VOICE.parseList()`).
+    - This works only for voice, and only for kharcha.
+- **Saved message:** a green toast ("✓ Kharcha ₹250 jud gaya") shows for about 2.5 seconds after every save.
 - **Roz ka hisab:** entries for each month grouped by date, with a "Kharcha kahan gaya" category breakdown.
 - **Len-den:** each person's balance (Lena hai / Dena hai) with quick buttons to record money returned.
 - **Statement (bank style):**

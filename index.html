@@ -301,6 +301,34 @@ table.stmt .cr { color: var(--jama); }
 .voice-msg { font-size: .88rem; margin: -6px 0 0; padding: 8px 12px; border-radius: 10px; background: var(--paper); border: 1px dashed var(--line); color: var(--ink); overflow-wrap: anywhere; }
 .voice-msg.ok { border-color: var(--jama); }
 .voice-msg.err { border-color: var(--naam); color: var(--naam); }
+.vlist-wrap { position: fixed; inset: 0; z-index: 60; background: rgba(10, 12, 18, .5); display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 640px) { .vlist-wrap { align-items: center; } }
+.vlist { width: 100%; max-width: 540px; max-height: 88vh; overflow: auto; border-radius: 18px 18px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 12px; }
+@media (min-width: 640px) { .vlist { border-radius: 18px; } }
+.vlist h2 { margin: 0; font-family: var(--font-display); font-size: 1.2rem; }
+.vlist .heard { margin: 0; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.vlist .hint { margin: 0; font-size: .8rem; color: var(--muted); }
+.vlist-date { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); }
+.vlist-date input, .vrow input[type=text], .vrow input[type=number], .vrow select { font: inherit; font-size: .92rem; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 0; }
+.vrow { display: grid; grid-template-columns: auto minmax(0, 1fr) 110px; gap: 6px 8px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.vrow input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--khata); }
+.vrow .vamt-wrap { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+.vrow .vamt-wrap input { width: 100%; text-align: end; }
+.vrow .vmeta { grid-column: 2 / -1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .82rem; color: var(--muted); }
+.vrow .vmeta select { font-size: .82rem; padding: 4px 6px; }
+.vrow .vqty { padding: 2px 8px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); }
+.vrow.off .vname, .vrow.off .vamt-wrap { opacity: .45; text-decoration: line-through; }
+.vlist-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; flex-wrap: wrap; }
+.vlist-foot .tot { font-weight: 600; font-size: 1.05rem; unicode-bidi: isolate; }
+.vlist-foot .btns { display: flex; gap: 8px; }
+.vlist-foot button { font: inherit; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.vlist-foot button.primary { background: var(--khata); border-color: var(--khata); color: #fff; }
+.vlist-foot button:disabled { opacity: .5; cursor: default; }
+.toast { position: fixed; left: 50%; bottom: 28px; z-index: 70; transform: translateX(-50%); display: flex; width: max-content; align-items: center; gap: 8px; max-width: calc(100vw - 32px); padding: 12px 20px; border-radius: 999px; background: #12765A; color: #fff; font-weight: 600; font-size: .95rem; box-shadow: 0 8px 24px rgba(0,0,0,.22); pointer-events: none; }
+.toast b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.25); font-size: .8rem; flex: none; }
+@media (max-width: 820px) { .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); } }
+@media (prefers-reduced-motion: no-preference) { .toast:not([hidden]) { animation: toast-in .25s ease-out; } @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } } }
+@media print { .toast { display: none !important; } }
 </style>
 </head>
 <body>
@@ -401,6 +429,21 @@ table.stmt .cr { color: var(--jama); }
     <div id="view" class="list"></div>
   </section>
 </main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="vlist-wrap" id="vlist" hidden>
+  <div class="vlist panel" role="dialog" aria-modal="true" aria-labelledby="vlistTitle">
+    <h2 id="vlistTitle"></h2>
+    <p class="heard" id="vlistHeard"></p>
+    <label class="vlist-date"><span data-i18n="f.date">Tareekh</span><input type="date" id="vlistDate"></label>
+    <div id="vlistRows"></div>
+    <p class="hint" data-i18n="vlist.hint"></p>
+    <div class="vlist-foot">
+      <span class="tot"><span data-i18n="vlist.total">Total</span> <b id="vlistTotal"></b></span>
+      <span class="btns"><button type="button" id="vlistCancel" data-i18n="vlist.cancel">Cancel</button><button type="button" class="primary" id="vlistAdd"></button></span>
+    </div>
+  </div>
+</div>
 
 <nav class="bottom-nav" id="bottomNav" aria-label="Sections">
   <button type="button" data-nav="add"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><span data-i18n="form.title">Nayi entry</span></button>
@@ -808,7 +851,25 @@ table.stmt .cr { color: var(--jama); }
       "voice.none": "کچھ سنائی نہیں دیا۔ مائیک دبا کر دوبارہ بولیے۔", "voice.denied": "مائیک کی اجازت نہیں ملی۔ براؤزر سیٹنگز میں مائیک کی اجازت دیجیے۔",
       "voice.net": "بول کر لکھنے کے لیے انٹرنیٹ چاہیے۔" },
   };
+  const VLIST_STR = {
+    hinglish: { "voice.listening": "Boliye… jaise “Sabzi 250”, “Pyaj 1 kg 60, aalu 1 kg 30” ya “Ramesh ko 500 udhaar diya”",
+      "vlist.title": "{n} cheezein mili", "vlist.hint": "Galat ho to naam ya rakam badal dijiye, ya tick hata dijiye.", "vlist.total": "Total",
+      "vlist.add": "{n} entry jodo", "vlist.cancel": "Cancel", "vlist.added": "{n} entry jud gayi · kul {amt}" },
+    en: { "voice.listening": "Speak now… e.g. “Vegetables 250”, “Onion 1 kg 60, potato 1 kg 30” or “Lent 500 to Ramesh”",
+      "vlist.title": "{n} items found", "vlist.hint": "Fix a name or amount if needed, or untick an item.", "vlist.total": "Total",
+      "vlist.add": "Add {n} entries", "vlist.cancel": "Cancel", "vlist.added": "{n} entries added · total {amt}" },
+    hi: { "voice.listening": "बोलिए… जैसे “सब्ज़ी 250”, “प्याज़ 1 किलो 60, आलू 1 किलो 30” या “रमेश को 500 उधार दिया”",
+      "vlist.title": "{n} चीज़ें मिलीं", "vlist.hint": "गलत हो तो नाम या रकम बदल दीजिए, या टिक हटा दीजिए।", "vlist.total": "कुल",
+      "vlist.add": "{n} एंट्री जोड़ें", "vlist.cancel": "रद्द करें", "vlist.added": "{n} एंट्री जुड़ गईं · कुल {amt}" },
+    bn: { "voice.listening": "বলুন… যেমন “সবজি ২৫০”, “পেঁয়াজ ১ কেজি ৬০, আলু ১ কেজি ৩০” বা “রমেশকে ৫০০ ধার দিলাম”",
+      "vlist.title": "{n}টি জিনিস পাওয়া গেছে", "vlist.hint": "ভুল হলে নাম বা টাকা বদলে দিন, বা টিক তুলে দিন।", "vlist.total": "মোট",
+      "vlist.add": "{n}টি এন্ট্রি যোগ করুন", "vlist.cancel": "বাতিল", "vlist.added": "{n}টি এন্ট্রি যোগ হয়েছে · মোট {amt}" },
+    ur: { "voice.listening": "بولیے… جیسے “سبزی 250”، “پیاز 1 کلو 60، آلو 1 کلو 30” یا “رمیش کو 500 ادھار دیا”",
+      "vlist.title": "{n} چیزیں ملیں", "vlist.hint": "غلط ہو تو نام یا رقم بدل دیجیے، یا ٹک ہٹا دیجیے۔", "vlist.total": "کل",
+      "vlist.add": "{n} انٹریاں جوڑیں", "vlist.cancel": "منسوخ", "vlist.added": "{n} انٹریاں جڑ گئیں · کل {amt}" },
+  };
   for (const [l, o] of Object.entries(VOICE_STR)) Object.assign(STR[l], o);
+  for (const [l, o] of Object.entries(VLIST_STR)) Object.assign(STR[l], o);
   let LANG = pickLang();
   function tr(key, vars) {
     let s = (STR[LANG] && STR[LANG][key]) || STR.hinglish[key] || key;
@@ -1525,6 +1586,16 @@ table.stmt .cr { color: var(--jama); }
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }
 
+  // Short green "saved" message that fades away by itself.
+  let toastTimer = null;
+  function showToast(text) {
+    const t = $("toast");
+    t.replaceChildren(h("b", null, "✓"), h("span", null, text));
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+
   function prefill(type, name, amount) {
     if (state.view !== "add") { state.view = "add"; document.body.dataset.view = "add"; for (const b of document.querySelectorAll("#bottomNav [data-nav]")) { if (b.dataset.nav === "add") b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); } render(); }
     state.type = type;
@@ -1556,7 +1627,7 @@ table.stmt .cr { color: var(--jama); }
     };
     const CAT_WORDS = {
       kharcha: {
-        "Khana-peena": W("sabzi|sabji|sabziyan|vegetable|vegetables|food|khana|khane|doodh|dudh|milk|chai|tea|coffee|nashta|breakfast|lunch|dinner|restaurant|hotel|zomato|swiggy|fal|fruit|fruits|anda|ande|roti|biryani|pizza|samosa|mithai|सब्जी|सब्ज़ी|खाना|दूध|चाय|नाश्ता|फल|अंडे|होटल|मिठाई|সবজি|খাবার|দুধ|চা|নাস্তা|ফল|ডিম|سبزی|کھانا|دودھ|چائے|ناشتہ|پھل"),
+        "Khana-peena": W("sabzi|sabji|sabziyan|vegetable|vegetables|food|pyaj|pyaaz|pyaz|piyaj|piyaz|onion|onions|aloo|alu|aalu|potato|potatoes|bhindi|vindi|bhendi|tamatar|tamater|tomato|tomatoes|gobhi|gobi|mirch|mirchi|dhaniya|adrak|lahsun|lehsun|palak|baingan|bengan|kheera|khira|gajar|matar|nimbu|kela|kele|seb|aam|angoor|papita|santra|lauki|tinda|karela|paneer|dahi|makhan|butter|bread|chini|sugar|namak|प्याज|प्याज़|आलू|भिंडी|टमाटर|गोभी|मिर्च|धनिया|अदरक|लहसुन|पालक|बैंगन|खीरा|गाजर|मटर|नींबू|केला|केले|सेब|आम|अंगूर|लौकी|पनीर|दही|चीनी|নুন|পেঁয়াজ|আলু|ঢেঁড়স|টমেটো|বেগুন|লঙ্কা|ধনে|আদা|রসুন|কলা|আপেল|پیاز|آلو|بھنڈی|ٹماٹر|گوبھی|مرچ|دھنیا|ادرک|لہسن|پالک|بینگن|کیلا|سیب|khana|khane|doodh|dudh|milk|chai|tea|coffee|nashta|breakfast|lunch|dinner|restaurant|hotel|zomato|swiggy|fal|fruit|fruits|anda|ande|roti|biryani|pizza|samosa|mithai|सब्जी|सब्ज़ी|खाना|दूध|चाय|नाश्ता|फल|अंडे|होटल|मिठाई|সবজি|খাবার|দুধ|চা|নাস্তা|ফল|ডিম|سبزی|کھانا|دودھ|چائے|ناشتہ|پھل"),
         "Ghar ka saman": W("ration|kirana|grocery|groceries|saman|samaan|sabun|soap|atta|chawal|rice|dal|tel|oil|bazaar|bazar|राशन|किराना|सामान|आटा|चावल|दाल|तेल|साबुन|বাজার|চাল|ডাল|তেল|সাবান|راشن|سامان|آٹا|چاول|دال|تیل"),
         "Rent": W("rent|kiraya|kiraaya|bhada|bhaada|किराया|भाड़ा|भाडा|ভাড়া|کرایہ"),
         "Bills": W("bill|bills|bijli|light|electricity|pani|water|gas|cylinder|wifi|broadband|dth|बिल|बिजली|पानी|गैस|सिलेंडर|বিল|বিদ্যুৎ|গ্যাস|بل|بجلی|پانی|گیس"),
@@ -1679,7 +1750,73 @@ table.stmt .cr { color: var(--jama); }
       if (note) note = note[0].toUpperCase() + note.slice(1);
       return { type, amount, person, category, date, note: note.slice(0, 120) };
     }
-    return { parse };
+    // ---- several items in one sentence: "pyaj 1 kg 60, aalu ek kg 30, bhindi ek kg 70" ----
+    const UNITS = [
+      [W("kg|kgs|kilo|kilos|kilogram|kilograms|किलो|किग्रा|কেজি|কিলো|کلو"), "kg"],
+      [W("g|gm|gms|gram|grams|gramme|ग्राम|গ্রাম|گرام"), "g"],
+      [W("l|ltr|litre|liter|litres|liters|लीटर|लिटर|লিটার|لیٹر"), "L"],
+      [W("ml|मिली|এমএল"), "ml"],
+      [W("dozen|darjan|darjen|दर्जन|ডজন|درجن"), "dozen"],
+      [W("packet|packets|pack|pkt|पैकेट|প্যাকেট|پیکٹ"), "packet"],
+      [W("piece|pieces|pc|pcs|nag|पीस|नग|পিস|টা|پیس"), "pc"],
+    ];
+    const unitOf = (t) => { for (const [w, u] of UNITS) if (w.includes(t)) return u; return null; };
+    const QTYW = { ek: 1, do: 2, teen: 3, char: 4, chaar: 4, paanch: 5, panch: 5, aadha: 0.5, adha: 0.5, half: 0.5, dedh: 1.5, dhai: 2.5, one: 1, two: 2, three: 3, four: 4, five: 5,
+      "एक": 1, "दो": 2, "तीन": 3, "चार": 4, "पांच": 5, "पाँच": 5, "आधा": 0.5, "डेढ़": 1.5, "ढाई": 2.5, "এক": 1, "দুই": 2, "আধা": 0.5, "ایک": 1, "دو": 2, "آدھا": 0.5 };
+    const SEP = W("aur|and|or|phir|fir|plus|और|फिर|এবং|আর|اور|پھر");
+    function parseList(raw, ctx) {
+      let text = String(raw || "").toLowerCase().replace(/[०-९০-৯٠-٩۰-۹]/g, (d) => DIGITS[d]);
+      text = text.replace(/(\d),(?=\d{3}\b)/g, "$1").replace(/₹\s*/g, " ₹ ").replace(/(\d)(kg|kgs|gm|gms|g|ltr|l|ml|rs|pcs|pc)\b/g, "$1 $2");
+      const raw0 = text.split(/[\s,.!?।؟;]+/).filter(Boolean);
+      const tokens = [];
+      for (const t of raw0) {
+        if (t !== "থেকে" && t.endsWith("থেকে") && t.length > 5) tokens.push(t.slice(0, -4), "থেকে");
+        else if (t !== "কে" && t.endsWith("কে") && t.length > 3) tokens.push(t.slice(0, -2), "কে");
+        else tokens.push(t);
+      }
+      // a list is only for shopping: no loan, return or income words
+      if (has(tokens, kw.wapas) || has(tokens, kw.udhaar) || has(tokens, kw.income)) return null;
+      const back = has(tokens, kw.dayBefore) ? 2 : has(tokens, kw.yesterday) ? 1 : 0;
+      let date = ctx.today;
+      if (back) { const x = new Date(ctx.today + "T00:00:00"); x.setDate(x.getDate() - back); date = x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); }
+      const skipName = new Set([...kw.currency, ...kw.filler, ...kw.yesterday, ...kw.dayBefore, ...kw.gave, ...kw.took, ...SEP]);
+      const items = [];
+      let cur = { words: [], qty: null, unit: null };
+      const multOf = (t) => { for (const [w, m] of MULT) if (w.includes(t)) return m; return 0; };
+      for (let i = 0; i < tokens.length; i++) {
+        const t = tokens[i], next = tokens[i + 1];
+        const num = /^\d+(\.\d+)?$/.test(t) ? parseFloat(t) : (QTYW[t] != null && next && unitOf(next) ? QTYW[t] : null);
+        if (num != null) {
+          if (next && unitOf(next)) { cur.qty = num; cur.unit = unitOf(next); i++; continue; }
+          let amt = num;
+          const m = next ? multOf(next) : 0;
+          if (m) { amt *= m; i++; }
+          if (cur.words.length || cur.qty != null) {
+            items.push({ ...cur, amount: Math.round(amt * 100) / 100 });
+          } else if (items.length) {
+            // a stray number with no item name: probably the price said again; ignore
+          }
+          cur = { words: [], qty: null, unit: null };
+          continue;
+        }
+        if (unitOf(t) && !cur.qty && cur.words.length) { cur.qty = 1; cur.unit = unitOf(t); continue; }
+        if (unitOf(t)) continue;
+        if (skipName.has(t) || t === "₹") continue;
+        cur.words.push(t);
+      }
+      if (items.length < 2) return null;
+      const cap = (w) => /^[a-z]/.test(w) ? w[0].toUpperCase() + w.slice(1) : w;
+      const out = items.map((it) => {
+        const name = cap(it.words.join(" ").slice(0, 60)) || "Saman";
+        const qty = it.qty != null ? (Number.isInteger(it.qty) ? it.qty : it.qty) + " " + it.unit : "";
+        let category = "";
+        for (const [cat, words] of Object.entries(CAT_WORDS.kharcha)) if (it.words.some((w) => words.includes(w))) { category = cat; break; }
+        if (!category) category = it.unit && ["kg", "g", "dozen"].includes(it.unit) ? "Khana-peena" : "Other";
+        return { name, qty, amount: it.amount, category, note: (name + (qty ? " " + qty : "")).slice(0, 120) };
+      }).filter((x) => x.amount > 0);
+      return out.length >= 2 ? { date, items: out } : null;
+    }
+    return { parse, parseList };
   })();
 
   // The browser's own speech service (Google's in Chrome) turns speech into text. Nothing is saved until the user taps "Entry jodo".
@@ -1694,23 +1831,34 @@ table.stmt .cr { color: var(--jama); }
     rec = new SpeechRec();
     rec.lang = VOICE_LANG[LANG] || "hi-IN";
     rec.interimResults = true;
-    rec.continuous = false;
+    rec.continuous = true; // a shopping list can be long; we stop after a short silence
+    let silence = null;
+    const arm = (ms) => { clearTimeout(silence); silence = setTimeout(() => { try { rec.stop(); } catch {} }, ms); };
     rec.maxAlternatives = 1;
     let heard = "", failed = false;
-    rec.onstart = () => { setMic(true); voiceSay(tr("voice.listening")); };
+    rec.onstart = () => { setMic(true); voiceSay(tr("voice.listening")); arm(8000); };
     rec.onresult = (ev) => {
-      heard = "";
-      for (const r of ev.results) heard += r[0].transcript;
+      // Some Android versions repeat earlier text inside later results, so keep only the longest version of each phrase.
+      const parts = [];
+      for (const r of ev.results) {
+        const t = r[0].transcript.trim();
+        if (!t) continue;
+        const last = parts[parts.length - 1];
+        if (last && t.toLowerCase().startsWith(last.toLowerCase())) parts[parts.length - 1] = t;
+        else if (!(last && last.toLowerCase().startsWith(t.toLowerCase()))) parts.push(t);
+      }
+      heard = parts.join(" ");
       voiceSay("“" + heard + "”");
+      arm(2500);
     };
     rec.onerror = (ev) => {
-      failed = true; setMic(false);
+      failed = true; setMic(false); clearTimeout(silence);
       const e = ev.error;
       if (e === "aborted") { voiceSay(""); return; }
       voiceSay(e === "not-allowed" || e === "service-not-allowed" ? tr("voice.denied") : e === "network" ? tr("voice.net") : tr("voice.none"), "err");
     };
     rec.onend = () => {
-      setMic(false);
+      setMic(false); clearTimeout(silence);
       if (failed) return;
       if (!heard.trim()) { voiceSay(tr("voice.none"), "err"); return; }
       applyVoice(heard.trim());
@@ -1718,6 +1866,8 @@ table.stmt .cr { color: var(--jama); }
     try { rec.start(); } catch { setMic(false); voiceSay(tr("voice.denied"), "err"); }
   }
   function applyVoice(text) {
+    const list = VOICE.parseList(text, { today: todayStr() });
+    if (list) { showVoiceList(list, text); return; }
     const r = VOICE.parse(text, { today: todayStr(), people: people().map((p) => p.name) });
     state.type = r.type;
     renderForm();
@@ -1732,6 +1882,71 @@ table.stmt .cr { color: var(--jama); }
     if (TYPES[r.type].person && !r.person) $("person").focus();
   }
   if (SpeechRec) { $("micBtn").hidden = false; $("micBtn").addEventListener("click", startVoice); }
+
+  // ---------- several items from one voice sentence: review, then add all ----------
+  function vlistRows() { return [...document.querySelectorAll("#vlistRows .vrow")]; }
+  function vlistUpdate() {
+    let total = 0, n = 0;
+    for (const r of vlistRows()) {
+      const on = r.querySelector("input[type=checkbox]").checked;
+      r.classList.toggle("off", !on);
+      const a = parseFloat(r.querySelector(".vamt").value);
+      if (on && a > 0) { total += a; n++; }
+    }
+    $("vlistTotal").textContent = money(total);
+    $("vlistAdd").textContent = tr("vlist.add", { n: fmtNum(n) });
+    $("vlistAdd").disabled = !n;
+  }
+  function showVoiceList(list, text) {
+    voiceSay("");
+    $("vlistTitle").textContent = tr("vlist.title", { n: fmtNum(list.items.length) });
+    $("vlistHeard").textContent = "“" + text + "”";
+    $("vlistDate").value = list.date;
+    $("vlistRows").replaceChildren(...list.items.map((it) => {
+      const cat = h("select", { class: "vcat", "aria-label": tr("f.category") }, CATS.kharcha.map((c) => h("option", { value: c }, catLabel(c))));
+      cat.value = it.category;
+      return h("div", { class: "vrow", "data-qty": it.qty || null },
+        h("input", { type: "checkbox", checked: true, "aria-label": it.name, onchange: vlistUpdate }),
+        h("input", { type: "text", class: "vname", value: it.name, maxlength: "60", "aria-label": tr("f.note") }),
+        h("label", { class: "vamt-wrap" }, "₹", h("input", { type: "number", class: "vamt", inputmode: "decimal", min: "0", step: "0.01", value: String(it.amount), oninput: vlistUpdate, "aria-label": tr("f.amount") })),
+        h("div", { class: "vmeta" }, it.qty ? h("span", { class: "vqty" }, it.qty) : null, cat));
+    }));
+    vlistUpdate();
+    $("vlist").hidden = false;
+    $("vlistAdd").focus();
+  }
+  function closeVoiceList() { $("vlist").hidden = true; $("vlistRows").replaceChildren(); }
+  async function addVoiceList() {
+    const date = $("vlistDate").value || todayStr();
+    const rows = vlistRows().filter((r) => r.querySelector("input[type=checkbox]").checked);
+    if (state.account && !hasToken() && tokenClient && !pendingToken) requestToken("").then(() => syncNow()).catch(() => renderAccount());
+    $("vlistAdd").disabled = true;
+    let n = 0, total = 0;
+    try {
+      for (const r of rows) {
+        const amount = Math.round(parseFloat(r.querySelector(".vamt").value) * 100) / 100;
+        if (!(amount > 0)) continue;
+        const name = r.querySelector(".vname").value.trim().replace(/\s+/g, " ");
+        const qty = r.dataset.qty || "";
+        await store.add({ type: "kharcha", amount, date, category: r.querySelector(".vcat").value, note: (name + (qty ? " " + qty : "")).slice(0, 120), createdAt: Date.now() + n });
+        n++; total += amount;
+      }
+    } catch (err) {
+      closeVoiceList();
+      voiceSay(err && err.code === "quota_exceeded" ? tr("err.quota") : tr("err.save"), "err");
+      return;
+    }
+    closeVoiceList();
+    $("formMsg").textContent = tr("vlist.added", { n: fmtNum(n), amt: money(total) });
+    $("formMsg").className = "form-msg ok";
+    showToast(tr("vlist.added", { n: fmtNum(n), amt: money(total) }));
+    setTimeout(maybeAskLogin, 700);
+    if (date.slice(0, 7) !== state.month && state.tab === "roz") { state.month = date.slice(0, 7); render(); }
+  }
+  $("vlistAdd").addEventListener("click", addVoiceList);
+  $("vlistCancel").addEventListener("click", closeVoiceList);
+  $("vlist").addEventListener("click", (ev) => { if (ev.target === $("vlist")) closeVoiceList(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("vlist").hidden) closeVoiceList(); });
 
   // ---------- events ----------
   $("types").addEventListener("click", (ev) => {
@@ -1774,6 +1989,7 @@ table.stmt .cr { color: var(--jama); }
       $("amount").value = ""; $("noteInput").value = "";
       voiceSay("");
       say(tr("v.added", { type: typeLabel(state.type), amt: money(amount) }), "ok");
+      showToast(tr("v.added", { type: typeLabel(state.type), amt: money(amount) }));
       setTimeout(maybeAskLogin, 700);
       if (date.slice(0, 7) !== state.month && state.tab === "roz") { state.month = date.slice(0, 7); render(); }
       $("amount").focus();
